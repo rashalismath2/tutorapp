@@ -1,96 +1,117 @@
 <template>
-    <ion-page>
+    <ion-page v-show="hideDefaultRegisterPage">
         <ion-content>
             <div id="register-cont">
                 <div id="master-icon">
                     <img src="../../src/icons/professor.png" />
                 </div>
-                <ion-text color="secondary">
-                    <h2>Sign Up</h2>
-                    <p>Register yourself</p>
-                </ion-text>
-                <div class="ion-margin">
-                    <form v-on:submit.prevent="register" class="ion-margin">
-                        <ion-item>
-                            <ion-label v-bind:class="error_text" position="floating">First Name</ion-label>
-                            <ion-input v-on:change="texChanged" type="text" v-model="firstName" required  />
-                        </ion-item>
-                        <ion-item>
-                            <ion-label v-bind:class="error_text" position="floating">Last Name</ion-label>
-                            <ion-input v-on:change="texChanged" type="text"  v-model="lastName" required  />
-                        </ion-item>
-                        <ion-item>
-                            <ion-label v-bind:class="error_text" position="floating">Email</ion-label>
-                            <ion-input v-on:change="texChanged" type="email" autocomplete="email" v-model="email" required inputmode="email" />
-                        </ion-item>
-                        <ion-item>
-                            <ion-label v-bind:class="error_text" position="floating">Password</ion-label>
-                            <ion-input v-on:change="texChanged" v-model="password" required type="password" />
-                        </ion-item>
-                        <ion-button class="ion-margin-top" type="submit" expand="full">SIGN UP</ion-button>
-                    </form>
-                    <div id="sign-in-options">
-                        <ion-text class="ion-margin-top">
-                            <p>Already have an account? </p>
-                        </ion-text>
-                        <ion-text class="ion-margin-top" color="warning">
-                            <router-link :to="{name:'Login'}">Sign In</router-link>
-                        </ion-text>
-                    </div>
-                    <ion-toast
-                        class="ion-margin"
-                        color="secondary"
-                        keyboard-close=true
-                        :is-open="error_message!=null"
-                        v-bind:message="error_message"
-                        duration="3000"
-                    >
-                    </ion-toast>
-                </div>
+                <RegisterBasic
+                    v-show="hideRegisterBasic"
+                    v-bind:errorText="error_text"
+                    v-on:errorTextChanged="errorTextChanged($event)"
+                    v-on:submitbasics="submitbasics($event)" />
+                
+                <RegisterActivation 
+                    v-on:reEditDetails="reEditDetails($event)"
+                    v-on:resendActivationCode="resendActivationCode($event)"
+                    v-on:activationSuccess="activationSuccess($event)"
+                    v-bind:verificationCode="verificationCode"
+                    v-show="hideRegisterActivation" />
+
+          
+                <ion-toast
+                    class="ion-margin"
+                    color="secondary"
+                    keyboard-close=true
+                    :is-open="error_message!=null"
+                    v-bind:message="error_message"
+                    duration="3000"
+                >
+                </ion-toast>
             </div>
 
         </ion-content>
     </ion-page>
+    <RegisterUploadPicture
+        v-bind:email="email"
+        v-bind:firstName="firstName"
+        v-bind:lastName="lastName"
+        v-show="hideUploadPicture"
+    />
+
 </template>
 
 <script>
 
+import RegisterBasic from "./RegisterBasic.vue"
+import RegisterActivation from "./RegisterActivation.vue"
+import RegisterUploadPicture from "./RegisterUploadPicture.vue"
+
 // import axios from 'axios'
 
-import {IonButton,
-        IonItem,
-        IonLabel,
-        IonText, 
-        IonInput, 
+import {
         IonPage,
         IonContent,
         IonToast } from "@ionic/vue"
 
 export default{
     components:{
-        IonInput,
+        RegisterBasic,
+        RegisterUploadPicture,
+        RegisterActivation,
         IonPage,
         IonContent,
-        IonButton,
-        IonItem,
-        IonLabel,
-        IonText,
+
         IonToast 
     },
     data() {
         return {
+            hideRegisterBasic:true,
+            hideRegisterActivation:false,
+            hideUploadPicture:false,
+            hideDefaultRegisterPage:true,
+
             firstName:"",
             lastName:"",
             email:"",
             password:"",
             error_text:"",
-            error_message:null
+            error_message:null,
+            verificationCode:null
         }
     },
     methods: {
-        texChanged(){
+        reEditDetails(){
+            this.hideRegisterBasic=true
+            this.hideRegisterActivation=false
+
+            console.log()
+        },
+        resendActivationCode(){
+        
+        },
+        activationSuccess(){
+            this.hideRegisterActivation=false
+            this.hideUploadPicture=true
+            this.hideDefaultRegisterPage=false
+        },
+        errorTextChanged(){
             this.error_message=null
             this.error_text=""
+        },
+        submitbasics(data){
+            console.log(data)
+
+            var {firstName,lastName,email,password} =data
+            this.firstName=firstName
+            this.lastName=lastName
+            this.email=email
+            this.password=password
+
+            this.hideRegisterBasic=false
+            this.hideRegisterActivation=true
+
+            this.verificationCode=5555
         },
         //TODO- how to use config file to get values
         register(){
@@ -112,7 +133,7 @@ export default{
 
 </script>
 
-<style  scoped>
+<style >
 
 .md,.ios {
   --ion-background-color: var(--ion-color-primary);
@@ -126,21 +147,6 @@ ion-toast{
     --border-radius:20px
 }
 
-.error-text{
-    color:var(--ion-color-danger)
-}
-
-ion-text{
-    text-align: center;
-}
-
-ion-text h2{
-    font-weight: bold;
-}
-ion-text p{
-    margin: 0;
-    text-align: center;
-}
 
 #register-cont{
     background: white;
@@ -168,14 +174,6 @@ ion-text p{
     -moz-box-shadow: -2px -2px 8px 2px rgba(0,0,0,0.19);
 }
 
-#sign-in-options{
-    display: flex;
-    justify-content: center;
-}
 
-a{
-    text-decoration: none;
-    color: inherit;
-}
 
 </style>

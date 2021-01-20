@@ -5,6 +5,7 @@ import Home from '../views/Home.vue'
 import Login from "../views/Authentication/Login.vue"
 import Register from "../views/Authentication/Register.vue"
 
+
 const routes = [
   {
     path: '/',
