@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import Home from '../views/Home.vue'
 
 import Login from "../views/Authentication/Login.vue"
+import Register from "../views/Authentication/Register.vue"
 
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
   },
   {
     path: '/login',
