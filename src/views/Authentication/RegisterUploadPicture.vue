@@ -3,17 +3,17 @@
         <ion-content>
             <div id="register-pic">
                 <div id="master-icon">
-                    <img src="../../src/icons/add-photo.png" />
+                    
+                    <img v-if="imgUrl"  v-on:click="takePicture" v-bind:src="imgUrl" />
+                    <img v-else v-on:click="takePicture"  src="../../src/icons/add-photo.png" />
                 </div>
                 <div class="ion-margin">
                     <div class="ion-margin ion-text-capitalize">
                         <ion-text>
-                            <p>{{firstName}} {{lastName}}</p>
+                            <p><b>Almost there,</b></p>
+                            <p>You can add a profile picture(optional) and fill the education field here</p>
                         </ion-text>
 
-                        <ion-text>
-                            <p>{{email}}</p>
-                        </ion-text>
                     </div>
                     <form class="ion-margin" v-on:submit.prevent="submitPicture">
                         <ion-input  v-model="education"  inputmode="text" placeholder="Education" type="text" required ></ion-input>
@@ -27,7 +27,9 @@
 
 <script>
 
+import { Plugins, CameraResultType,Capacitor ,FilesystemDirectory } from "@capacitor/core";
 
+const { Camera,Filesystem   } = Plugins;
 
 import {IonButton,
  
@@ -48,12 +50,71 @@ export default{
     data() {
         return {
             education:"",
-            
+            img:null,
+            imgUrl:null
         }
     },
     methods: {
+        async takePicture() {
+            const image = await Camera.getPhoto({
+                quality: 90,
+                allowEditing: true,
+                resultType: CameraResultType.Uri,
+            });
+
+            Filesystem.readFile({
+                path: image.path
+            })
+            .then(result=>{
+
+                let date = new Date(),
+                time = date.getTime(),
+                fileName = time + ".jpeg";
+
+                Filesystem.writeFile({
+                    data: result.data,
+                    path: fileName,
+                    directory: FilesystemDirectory.Data
+                })
+                .then(()=>{
+                    Filesystem.getUri({
+                        directory: FilesystemDirectory.Data,
+                        path: fileName
+                    })
+                    .then((uri)=>{
+                        let path = Capacitor.convertFileSrc(uri.uri);
+                        console.log(path);
+                        this.imgUrl = path;
+
+                        Filesystem.readFile({
+                            path: path
+                        })
+                        .then(file=>{
+                            this.photo=file.data
+                        })
+
+                    })
+                    .catch(()=>{})
+
+
+                })
+                .catch(()=>{})
+
+            })
+            .catch(()=>{
+
+            })
+            
+
+        },
+    
+
         submitPicture(){
-            //TODO-send education and picture to main register
+            var data={
+                photo:this.img,
+                education:this.education,
+            }
+            this.$emit("submitPictureWithData",data);
         },
 
     },
@@ -80,6 +141,8 @@ p{
     color: var(--ion-color-secondary);
 }
 
+
+
 #register-pic{
     background: white;
     height: 75%;
@@ -96,6 +159,7 @@ p{
 }
 #master-icon img{
     width: 120px;
+    height: 120px;
     position: absolute;
     top: -50px;
     background: white;

@@ -14,8 +14,9 @@
                 <RegisterActivation 
                     v-on:reEditDetails="reEditDetails($event)"
                     v-on:resendActivationCode="resendActivationCode($event)"
-                    v-on:activationSuccess="activationSuccess($event)"
-                    v-bind:verificationCode="verificationCode"
+                    v-on:submitVerificationCode="submitVerificationCode($event)"
+                    v-bind:errorText="error_text"
+                    v-on:errorTextChanged="errorTextChanged($event)"
                     v-show="hideRegisterActivation" />
 
           
@@ -28,6 +29,12 @@
                     duration="3000"
                 >
                 </ion-toast>
+
+                <ion-loading
+                    :is-open="loadingDialog"
+                    message="Please wait..."
+                >
+                </ion-loading>
             </div>
 
         </ion-content>
@@ -37,6 +44,7 @@
         v-bind:firstName="firstName"
         v-bind:lastName="lastName"
         v-show="hideUploadPicture"
+        v-on:submitPictureWithData="submitPictureWithData($event)"
     />
 
 </template>
@@ -47,15 +55,17 @@ import RegisterBasic from "./RegisterBasic.vue"
 import RegisterActivation from "./RegisterActivation.vue"
 import RegisterUploadPicture from "./RegisterUploadPicture.vue"
 
-// import axios from 'axios'
+import axios from 'axios'
 
 import {
+        IonLoading,
         IonPage,
         IonContent,
         IonToast } from "@ionic/vue"
 
 export default{
     components:{
+        IonLoading,
         RegisterBasic,
         RegisterUploadPicture,
         RegisterActivation,
@@ -70,14 +80,15 @@ export default{
             hideRegisterActivation:false,
             hideUploadPicture:false,
             hideDefaultRegisterPage:true,
+            loadingDialog:false,
 
             firstName:"",
             lastName:"",
             email:"",
             password:"",
+
             error_text:"",
             error_message:null,
-            verificationCode:null
         }
     },
     methods: {
@@ -90,17 +101,32 @@ export default{
         resendActivationCode(){
         
         },
-        activationSuccess(){
-            this.hideRegisterActivation=false
-            this.hideUploadPicture=true
-            this.hideDefaultRegisterPage=false
+        submitVerificationCode(code){
+            this.loadingDialog=true
+            axios.post(process.env.VUE_APP_BACKEND_API+"/auth/master/verifyactivation",{
+                activationCode:code,
+                email:this.email
+            })
+            .then(()=>{
+                this.loadingDialog=false
+                this.hideRegisterActivation=false
+                this.hideUploadPicture=true
+                this.hideDefaultRegisterPage=false
+            })
+            .catch(()=>{
+                this.loadingDialog=false
+                this.error_text="error-text"
+                this.error_message="Code does not match"                
+            })
         },
+
         errorTextChanged(){
             this.error_message=null
             this.error_text=""
         },
         submitbasics(data){
-            console.log(data)
+            this.loadingDialog=true
+            this.error_message=null
 
             var {firstName,lastName,email,password} =data
             this.firstName=firstName
@@ -108,25 +134,57 @@ export default{
             this.email=email
             this.password=password
 
-            this.hideRegisterBasic=false
-            this.hideRegisterActivation=true
 
-            this.verificationCode=5555
+            axios.post(process.env.VUE_APP_BACKEND_API+"/auth/master/activationcode",{
+                email:this.email
+            })
+            .then(()=>{
+                this.loadingDialog=false
+                this.hideRegisterBasic=false
+                this.hideRegisterActivation=true
+            })
+            .catch((e)=>{
+                this.loadingDialog=false
+                this.error_text="error-text"
+                this.error_message=e.message             
+            })
+
         },
-        //TODO- how to use config file to get values
-        register(){
-            // axios.post("http://127.0.0.1:8000/api/auth/master/register",{
-            //     email:this.email,
-            //     password:this.password
-            // })
-            // .then(res=>{
-            //     console.log(res)
-            // })
-            // .catch(()=>{
-            //     this.error_text="error-text"
-            //     this.password=""
-            //     this.error_message="Incorrect email or password"
-            // })
+        submitPictureWithData(data){
+            this.loadingDialog=true
+            this.error_message=null
+            
+            var formData = new FormData();
+            formData.append('email',this.email)
+            formData.append('firstName',this.firstName)
+            formData.append('lastName',this.lastName)
+            formData.append('password',this.password)
+            formData.append('education',data.education)
+            
+            if(data.photo!=null){
+                formData.append('profile_picture',data.photo)
+            }
+            formData.append('_method', 'PATCH');
+
+            for (var pair of formData.entries()) {
+                console.log(pair[0]+ ', ' + pair[1]); 
+            }
+
+            axios({
+                method: 'post',
+                url: process.env.VUE_APP_BACKEND_API+"/auth/master/register",
+                data: formData,
+                headers: {'Content-Type': 'multipart/form-data' }
+            })
+            .then(()=>{
+                this.loadingDialog=false
+                this.$router.replace("/home")
+            })
+            .catch((e)=>{
+                this.error_text="error-text"
+                this.loadingDialog=false
+                this.error_message=e.message
+            })
         }
     },
 }
@@ -144,7 +202,8 @@ export default{
 }
 
 ion-toast{
-    --border-radius:20px
+    --border-radius:20px;
+    text-align: center;
 }
 
 

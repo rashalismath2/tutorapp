@@ -29,7 +29,7 @@
                             <p>Don't have an account? </p>
                         </ion-text>
                         <ion-text class="ion-margin-top" color="warning">
-                            <span > Sign Up</span>
+                            <router-link :to="{name:'Register'}"><span > Sign Up</span></router-link>
                         </ion-text>
                     </div>
                     <ion-toast
@@ -117,6 +117,12 @@ export default{
 
 ion-toast{
     --border-radius:20px
+}
+
+
+a{
+    text-decoration: none;
+    color: inherit;
 }
 
 .error-text{
