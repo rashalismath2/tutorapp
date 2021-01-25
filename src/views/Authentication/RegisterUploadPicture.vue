@@ -87,7 +87,7 @@ export default{
                         this.imgUrl = path;
 
                         Filesystem.readFile({
-                            path: path
+                            path: uri.uri
                         })
                         .then(file=>{
                             this.photo=file.data

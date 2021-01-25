@@ -44,11 +44,17 @@
                 </div>
             </div>
 
+                <ion-loading
+                    :is-open="loadingDialog"
+                    message="Please wait..."
+                />
         </ion-content>
     </ion-page>
 </template>
 
 <script>
+
+import AuthUser from "../../services/auth"
 
 import axios from 'axios'
 
@@ -59,7 +65,9 @@ import {IonButton,
         IonInput, 
         IonPage,
         IonContent,
-        IonToast } from "@ionic/vue"
+        IonToast,
+        IonLoading,
+         } from "@ionic/vue"
 
 export default{
     components:{
@@ -70,14 +78,17 @@ export default{
         IonItem,
         IonLabel,
         IonText,
-        IonToast 
+        IonToast ,
+        IonLoading,
+
     },
     data() {
         return {
             email:"",
             password:"",
             error_text:"",
-            error_message:null
+            error_message:null,
+            loadingDialog:false
         }
     },
     methods: {
@@ -85,16 +96,24 @@ export default{
             this.error_message=null
             this.error_text=""
         },
-        //TODO- how to use config file to get values
+
         login(){
-            axios.post("http://127.0.0.1:8000/api/auth/master/login",{
+            console.log(this.$store)
+            this.loadingDialog=true
+            axios.post(process.env.VUE_APP_BACKEND_API+"/auth/master/login",{
                 email:this.email,
                 password:this.password
             })
             .then(res=>{
                 console.log(res)
+                this.$store.dispatch("setAccessToken",res.data);
+                AuthUser.login(()=>{
+                    this.$router.replace({name:"Home"})
+                })
             })
-            .catch(()=>{
+            .catch((e)=>{
+                console.log(e)
+                this.loadingDialog=false
                 this.error_text="error-text"
                 this.password=""
                 this.error_message="Incorrect email or password"

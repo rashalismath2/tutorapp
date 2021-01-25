@@ -25,7 +25,10 @@ export default defineComponent({
     IonPage,
     IonTitle,
     IonToolbar
-  }
+  },
+  created() {
+    console.log(this.$store.getters.getAuthUser)
+  },
 });
 </script>
 
