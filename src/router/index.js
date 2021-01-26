@@ -6,16 +6,35 @@ import Login from "../views/Authentication/Login.vue"
 import Register from "../views/Authentication/Register.vue"
 
 
+
 const routes = [
   {
     path: '/',
     redirect: '/login'
   },
+
   {
     path: '/home',
     name: 'Home',
-    component: Home
+    component: Home,
+    children:[
+      {
+        path:"",
+        redirect:"/home/TabTests"
+      },
+      {
+        path: 'TabGroups',
+        name: 'TabGroups',
+        component: ()=>import("../views/Home/TabGroups.vue")
+      },
+      {
+        path: 'TabTests',
+        name: 'TabTests',
+        component: ()=>import("../views/Home/TabTests.vue")
+      }
+    ]
   },
+
   {
     path: '/register',
     name: 'Register',
@@ -25,7 +44,8 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
-  }
+  },
+
 ]
 
 const router = createRouter({

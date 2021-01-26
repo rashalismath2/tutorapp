@@ -98,21 +98,18 @@ export default{
         },
 
         login(){
-            console.log(this.$store)
             this.loadingDialog=true
             axios.post(process.env.VUE_APP_BACKEND_API+"/auth/master/login",{
                 email:this.email,
                 password:this.password
             })
             .then(res=>{
-                console.log(res)
-                this.$store.dispatch("setAccessToken",res.data);
+                this.$store.dispatch("AuthUser/setAccessToken",res.data);
                 AuthUser.login(()=>{
                     this.$router.replace({name:"Home"})
                 })
             })
-            .catch((e)=>{
-                console.log(e)
+            .catch((err)=>{
                 this.loadingDialog=false
                 this.error_text="error-text"
                 this.password=""

@@ -22,18 +22,18 @@ class AuthUser{
         if(id==null){
             axios.get(process.env.VUE_APP_BACKEND_API+"/auth/master/user-profile",{
                 headers:{
-                    Authorization:"Bearer "+store.getters.getAccessToken
+                    Authorization:"Bearer "+store.getters["AuthUser/getAccessToken"]
                 }
             })
             .then(res=>{
-                store.dispatch("setAuthUser",res.data)
+                store.dispatch("AuthUser/setAuthUser",res.data)
             })
             .catch(e=>{
                 console.log(e)
             })
         }
         else{
-            store.dispatch("initiateAuthState")
+            store.dispatch("AuthUser/initiateAuthState")
         }
     }
 

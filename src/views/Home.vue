@@ -2,24 +2,45 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar color="primary">
-        <ion-title>Blank</ion-title>
+        <ion-title><b>Master</b></ion-title>
       </ion-toolbar>
     </ion-header>
     
     <ion-content >
+        <ion-tabs >
+        <ion-tab-bar slot="top">
+          <ion-tab-button tab="tests"  href="/Home/TabTests">
+            <ion-label>Tests</ion-label>
+          </ion-tab-button>
 
+          <ion-tab-button tab="groups" href="/Home/TabGroups">
+            <ion-label>Groups</ion-label>
+          </ion-tab-button>
+        </ion-tab-bar>
+      </ion-tabs>
     </ion-content>
   </ion-page>
 </template>
 
 <script>
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+
+import { 
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonLabel,
+  IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+
   name: 'Home',
   components: {
-    
+      IonTabs,
+    IonTabBar,
+    IonTabButton,
+    IonLabel,
     IonContent,
     IonHeader,
     IonPage,
@@ -27,12 +48,21 @@ export default defineComponent({
     IonToolbar
   },
   created() {
-    console.log(this.$store.getters.getAuthUser)
+    //TODO-if user was not able to retrieve in aut.js check here and do something
+    console.log(this.$store.getters["AuthUser/getAuthUser"])
   },
+
+
 });
+
 </script>
 
 <style scoped>
+
+ion-content{
+  --ion-background-color: var(--ion-background-color);
+}
+
 #container {
   text-align: center;
   
