@@ -5,6 +5,7 @@ import Home from '../views/Home.vue'
 import Login from "../views/Authentication/Login.vue"
 import Register from "../views/Authentication/Register.vue"
 
+import Group from "../views/Groups/group.vue"
 
 
 const routes = [
@@ -44,6 +45,12 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/group/:id',
+    name: 'group',
+    component: Group,
+
   },
 
 ]

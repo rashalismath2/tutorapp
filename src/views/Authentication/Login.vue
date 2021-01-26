@@ -109,7 +109,7 @@ export default{
                     this.$router.replace({name:"Home"})
                 })
             })
-            .catch((err)=>{
+            .catch(()=>{
                 this.loadingDialog=false
                 this.error_text="error-text"
                 this.password=""

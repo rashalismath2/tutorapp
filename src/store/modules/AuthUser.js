@@ -34,28 +34,30 @@ export default {
             state.authUser.access_token=payload.access_token
         },
         initiateAuthState:(state,payload)=>{
+            
             state.authUser.id=payload.id
             state.authUser.firstName=payload.firstName
-            state.authUser.lastName.id=payload.lastName
-            state.authUser.education.id=payload.education
+            state.authUser.lastName=payload.lastName
+            state.authUser.education=payload.education
             state.authUser.access_token=payload.access_token
+            
         }
     },
     actions:{
         initiateAuthState:async (context)=>{
-            const { id } = await Storage.get({ key: 'id' });
-            const { firstName } = await Storage.get({ key: 'firstName' });
-            const { lastName } = await Storage.get({ key: 'lastName' });
-            const { education } = await Storage.get({ key: 'education' });
+            const id = await Storage.get({ key: 'id' });
+            const firstName = await Storage.get({ key: 'firstName' });
+            const  lastName = await Storage.get({ key: 'lastName' });
+            const education  = await Storage.get({ key: 'education' });
             
-            const { access_token } = await Storage.get({ key: 'access_token' });
-
+            const access_token = await Storage.get({ key: 'access_token' });
+            
             context.commit("initiateAuthState",{
-                firstName:firstName,
-                lastName:lastName,
-                id:id,
-                education:education,
-                access_token:access_token
+                firstName:firstName.value,
+                lastName:lastName.value,
+                id:id.value,
+                education:education.value,
+                access_token:access_token.value
             })
         },
         setAuthUser:async (context,payload)=>{

@@ -24,6 +24,8 @@
 
 <script>
 
+
+
 import { 
   IonTabs,
   IonTabBar,
@@ -47,9 +49,13 @@ export default defineComponent({
     IonTitle,
     IonToolbar
   },
-  created() {
-    //TODO-if user was not able to retrieve in aut.js check here and do something
-    console.log(this.$store.getters["AuthUser/getAuthUser"])
+  // beforeCreate(){},
+
+  mounted() {
+    
+  },
+  beforeCreate() {
+    this.$store.dispatch("AuthUser/initiateAuthState")
   },
 
 
@@ -58,6 +64,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+ion-tab-bar{
+  margin-bottom: 10px;
+}
 
 ion-content{
   --ion-background-color: var(--ion-background-color);
