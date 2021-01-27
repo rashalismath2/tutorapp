@@ -46,8 +46,10 @@
 
                 <ion-loading
                     :is-open="loadingDialog"
-                    message="Please wait..."
-                />
+                    message="Please wait..."> 
+                    <ion-spinner name="circles"></ion-spinner>
+                </ion-loading>
+
         </ion-content>
     </ion-page>
 </template>
@@ -58,7 +60,9 @@ import AuthUser from "../../services/auth"
 
 import axios from 'axios'
 
-import {IonButton,
+import {
+        IonSpinner,
+        IonButton,
         IonItem,
         IonLabel,
         IonText, 
@@ -71,6 +75,7 @@ import {IonButton,
 
 export default{
     components:{
+        IonSpinner,
         IonInput,
         IonPage,
         IonContent,

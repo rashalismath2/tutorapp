@@ -211,8 +211,9 @@ http://ionicframework.com/docs/theming/ */
 }
 
 
-ion-content{
-  --ion-background-color: var(--ion-background-color) !importent;
+
+ion-button ion-spinner{
+  height: 100%;
 }
 
 
@@ -241,10 +242,17 @@ ion-tab-button ion-label{
   font-weight: bold;
 }
 .tab-item-detail{
+  width: fit-content;
   display: flex;
 }
+.tab-item-detail{
+  float: left;
+  margin-right: 10px;
+}
+
 .tab-item-detail ion-badge{
   display: inherit;
+  color:white;
   width: fit-content;
   margin-left: 5px;
 }

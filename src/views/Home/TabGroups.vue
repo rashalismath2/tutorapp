@@ -8,11 +8,16 @@
                   <p class="tab-item-title">
                     {{group.groupName}}
                   </p>
-                  <p class="tab-item-detail"><span>Student count</span> 
-                    <ion-badge color="secondary">{{group.groups_students_count}}</ion-badge>
+                  <p class="tab-item-detail"><span>Allowed</span> 
+                    <ion-badge color="success">{{group.allowed_std_count}}</ion-badge>
+                  </p>
+                  <p class="tab-item-detail"><span>Not allowed</span> 
+                    <ion-badge color="warning">{{group.not_allowed_std_count}}</ion-badge>
                   </p>
                 </router-link>
-                <div class="tab-item-icon"><ion-icon  :icon="ellipsisVerticalSharp"></ion-icon></div>
+                <div class="tab-item-icon">
+                  <ion-icon  :icon="ellipsisVerticalSharp"></ion-icon>
+                </div>
               </div>
         </ion-item>
 
@@ -74,8 +79,7 @@ export default {
         }
     },
 
-    mounted() {
-      console.error("tabgroups mounted")
+    created() {
       this.showLoading=true
       this.error_message=null
       axios.get(process.env.VUE_APP_BACKEND_API+"/master/groups",{
@@ -88,10 +92,9 @@ export default {
         this.groups=res.data
         this.showLoading=false
       })
-      .catch(err=>{
+      .catch(()=>{
         this.showLoading=false
         this.error_message="Something went wrong"
-        console.log(err)
       })
     },
 
