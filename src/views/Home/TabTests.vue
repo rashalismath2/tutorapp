@@ -9,7 +9,9 @@
                 <ion-icon :icon="add"></ion-icon>
             </ion-fab-button>
         </ion-fab>
-
+      <div v-if="tests.length==0" class="no-items" >
+          <p>No tests yet</p>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -39,6 +41,7 @@ export default {
     data() {
         return {
             add,
+            tests:[]
         }
     },
 

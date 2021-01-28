@@ -45,7 +45,7 @@
             </ion-toast>
 
             <ion-modal :is-open="openModel">
-                <members v-on:cancelMembersModal="cancelMembersModal" />
+                <members  v-on:cancelMembersModal="cancelMembersModal" />
             </ion-modal>
 
     </ion-content>
@@ -126,6 +126,8 @@ export default {
       this.openModel=false
     },
     cancelEdit(){
+      this.error_message=null
+      this.error_text=""
       this.readOnly=true
       this.groupName=this.group.groupName
       this.groupDescription=this.group.description
@@ -136,7 +138,11 @@ export default {
       this.error_text=""
     },
     saveData(){
-      if(!this.readOnly){
+      if(this.groupName=="" || this.groupDescription==""){
+        this.error_message="Please dont keep fields empty"
+        this.error_text="error-text"
+      }
+      if(!this.readOnly && this.groupName!=="" && this.groupDescription!==""){
         this.openLoading=true
           axios.put(process.env.VUE_APP_BACKEND_API+"/master/groups",{
               groupId:this.group.id,
@@ -170,7 +176,6 @@ export default {
   async presentActionSheet() {
       const actionSheet = await actionSheetController
         .create({
-          header: 'Options',
           cssClass: 'actionSheetCss',
           buttons: [
             {

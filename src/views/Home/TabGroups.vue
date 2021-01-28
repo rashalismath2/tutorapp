@@ -20,6 +20,10 @@
                 </div>
               </div>
         </ion-item>
+        
+        <div v-if="groups.length==0 && !showLoading" class="no-items" >
+          <p>No groups yet</p>
+        </div>
 
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
             <ion-fab-button>

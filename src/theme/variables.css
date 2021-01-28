@@ -216,6 +216,15 @@ ion-button ion-spinner{
   height: 100%;
 }
 
+.alert-wrapper.sc-ion-alert-md,.alert-wrapper.sc-ion-alert-ios{
+  background:var(--ion-color-secondary);
+}
+.alert-wrapper.sc-ion-alert-md button,.alert-wrapper.sc-ion-alert-ios button{
+  color:white;
+}
+.action-sheet-group.sc-ion-action-sheet-md,.action-sheet-group.sc-ion-action-sheet-ios{
+  background:var(--ion-color-secondary);
+}
 
 ion-tab-button ion-label{
   font-size: var(--font-size);
@@ -265,4 +274,9 @@ ion-spinner{
   color: var(--ion-color-primary);
   width: 100%;
   height: 50px;
+}
+
+.no-items{
+  color: black;
+  text-align: center;
 }
