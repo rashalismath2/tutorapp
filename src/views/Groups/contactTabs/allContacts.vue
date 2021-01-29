@@ -51,6 +51,9 @@
 
 
 import {
+  IonLabel,
+  IonItem,
+  IonList,
   IonHeader,
   IonToolbar,
   IonSpinner,
@@ -67,6 +70,9 @@ import axios from "axios"
 
 export default {
   components: {
+    IonLabel,
+    IonItem,
+    IonList,
     IonToast,
     IonHeader,
     IonToolbar,
