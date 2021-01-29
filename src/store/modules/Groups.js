@@ -23,6 +23,26 @@ export default {
             })
             state.groups=groups
         },
+        updateGroupsToItsOriginalState:(state,payload)=>{
+            var unChangedStudents=payload.group.students.filter(student=>{
+                return !student.changed
+            })
+      
+            var changedStudentsWithOriginalState=payload.changedStudents.map(student=>{
+                student.changed=null
+                student.pre_status=null
+                return student
+            })
+             state.groups=state.groups.map((group)=>{
+                if(group.id==payload.groupId.id){
+                  group.students=[...unChangedStudents,...changedStudentsWithOriginalState]
+                  return group
+                }
+                return group
+              })
+       
+        },
+
         updateStudentStatus:(state,payload)=>{
             state.groups=state.groups.map(group=>{
                 if(group.id==payload.groupId){

@@ -19,7 +19,11 @@
                             <ion-label v-bind:class="error_text" position="floating">Password</ion-label>
                             <ion-input v-on:change="texChanged" v-model="password" required type="password" />
                         </ion-item>
-                        <ion-button class="ion-margin-top" type="submit" expand="full">SIGN IN</ion-button>
+                        <ion-button class="ion-margin-top" type="submit" :disabled="loadingDialog" expand="full" color="primary" >
+                            <ion-spinner v-if="loadingDialog" color="primary" name="crescent"></ion-spinner>
+                            <span v-else>SIGN IN</span>
+                        </ion-button>
+                        
                     </form>
                     <ion-text class="ion-margin" color="warning">
                         <p>Forgot password?</p>
@@ -44,12 +48,6 @@
                 </div>
             </div>
 
-                <ion-loading
-                    :is-open="loadingDialog"
-                    message="Please wait..."> 
-                    <ion-spinner name="circles"></ion-spinner>
-                </ion-loading>
-
         </ion-content>
     </ion-page>
 </template>
@@ -70,7 +68,6 @@ import {
         IonPage,
         IonContent,
         IonToast,
-        IonLoading,
          } from "@ionic/vue"
 
 export default{
@@ -84,7 +81,6 @@ export default{
         IonLabel,
         IonText,
         IonToast ,
-        IonLoading,
 
     },
     data() {
@@ -110,6 +106,7 @@ export default{
             })
             .then(res=>{
                 this.$store.dispatch("AuthUser/setAccessToken",res.data);
+                this.loadingDialog=false
                 AuthUser.login(()=>{
                     this.$router.replace({name:"Home"})
                 })
@@ -139,7 +136,9 @@ export default{
 ion-toast{
     --border-radius:20px
 }
-
+ion-spinner{
+  color:white
+}
 
 a{
     text-decoration: none;

@@ -215,6 +215,9 @@ http://ionicframework.com/docs/theming/ */
 ion-button ion-spinner{
   height: 100%;
 }
+ion-toolbar{
+  color: white;
+}
 
 .alert-wrapper.sc-ion-alert-md,.alert-wrapper.sc-ion-alert-ios{
   background:var(--ion-color-secondary);
@@ -229,6 +232,7 @@ ion-button ion-spinner{
 ion-tab-button ion-label{
   font-size: var(--font-size);
   font-weight: bold;
+  color: white;
 }
 .tab-selected{
   border-bottom: 2px solid white;

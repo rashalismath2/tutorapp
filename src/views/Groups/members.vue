@@ -50,8 +50,6 @@
         >
         </ion-toast>
 
-      <AddNewMember v-on:dissmissAlertAddNewMember="dissmissAlertAddNewMember" v-bind:openAddNewMember="openAddNewMember" />
-
     </ion-content>
 
     <ion-footer v-show="showSaveChanges">
@@ -67,7 +65,6 @@
 <script>
 
 import axios from "axios"
-import AddNewMember from "./addNewMember.vue"
 
 import {
   IonToast,
@@ -89,7 +86,6 @@ export default ({
 
   name: 'Home',
   components: {
-    AddNewMember,
     IonToast,
     IonSpinner,
     IonFooter,
@@ -148,6 +144,7 @@ export default ({
         var changedStudents=group.students.filter(student=>{
           return student.changed
         })
+      
         if(changedStudents.length>0){
           axios.patch(process.env.VUE_APP_BACKEND_API+"/master/groups/"+this.$route.params.id,{
               "students":changedStudents
@@ -157,16 +154,21 @@ export default ({
                     Authorization:"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
               }
             })
-            .then(res=>{
+            .then(()=>{
               this.openLoading=false
               this.showSaveChanges=false
               this.error_message="Users status updated"
-              console.log(res)
+              //we have to remove prestate and changed attribute since we 
+              //have to use that changed data again for changes
+              this.$store.commit("Groups/updateGroupsToItsOriginalState",{
+                group:group,
+                changedStudents:changedStudents,
+                groupId:this.$route.params.id
+              })
             })
-            .catch(err=>{
+            .catch(()=>{
               this.error_message="Something went wrong! Please try again later"
               this.openLoading=false
-              console.log(err)
             })
         }
         else{
@@ -235,7 +237,7 @@ ion-searchbar{
   --color:var(--ion-color-secondary);
 }
 ion-button{
-    --color:var(--ion-text-color);
+    --color:white;
 }
 ion-content{
   --ion-background-color: var(--ion-background-color);
