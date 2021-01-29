@@ -3,7 +3,7 @@
     <ion-header :translucent="true">
       <ion-toolbar>
           <ion-buttons slot="start">
-              <ion-back-button default-href="/home/TabGroups"></ion-back-button>
+              <ion-back-button v-on:click="goToHome"></ion-back-button>
           </ion-buttons>
           <ion-buttons @click="presentActionSheet" slot="end">
               <ion-icon  :icon="ellipsisVerticalSharp"></ion-icon>
@@ -48,17 +48,24 @@
                 <members  v-on:cancelMembersModal="cancelMembersModal" />
             </ion-modal>
 
+            <ion-modal
+              :is-open="openContactsModel">
+                <Contacts :groupId="groupId" />
+            </ion-modal>
+
     </ion-content>
   </ion-page>
 </template>
 
 <script >
 
+
 import members from "./members.vue"
+import Contacts from "./contacts.vue"
 
 import {ellipsisVerticalSharp,
   close, 
-  share, peopleCircle} from "ionicons/icons"
+  share, peopleCircle,at} from "ionicons/icons"
 
 import axios from "axios"
 
@@ -79,6 +86,7 @@ import {
 export default {
   name: 'Home',
   components: {
+    Contacts,
     IonModal,
     members,
     IonIcon,
@@ -106,10 +114,20 @@ export default {
           groupDiscription:"",
           openLoading:false,
           error_message:null,
-          error_text:""
+          error_text:"",
+          openContactsModel:false,
+          groupId:this.$route.params.id
       }
   },
+  mounted() {
+    
+    this.emitter.on("closeContactsModel", () => {
+     this.openContactsModel=false
+    });
+
+  },
   created() {
+
     var groups=this.$store.getters["Groups/getGroups"]
         
     this.group=groups.filter(group=>{
@@ -124,6 +142,9 @@ export default {
   methods: {
     cancelMembersModal(){
       this.openModel=false
+    },
+    goToHome(){
+      this.$router.push({name:"Home"})
     },
     cancelEdit(){
       this.error_message=null
@@ -184,6 +205,15 @@ export default {
               icon: peopleCircle,
               handler: () => {
                 this.openModel=true
+              },
+            },
+            {
+              text: 'Contacts',
+              role: 'destructive',
+              icon: at,
+              handler: () => {
+                this.$router.push({name:"TabAllContacts"})
+                this.openContactsModel=true
               },
             },
             {

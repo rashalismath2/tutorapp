@@ -50,7 +50,18 @@ const routes = [
     path: '/group/:id',
     name: 'group',
     component: Group,
-
+    children:[
+      {
+        path: 'TabRequests',
+        name: 'TabRequests',
+        component: ()=>import("../views/Groups/contactTabs/requests.vue")
+      },
+      {
+        path: 'TabAllContacts',
+        name: 'TabAllContacts',
+        component: ()=>import("../views/Groups/contactTabs/allContacts.vue")
+      }
+    ]
   },
 
 ]

@@ -57,7 +57,8 @@ import {
     IonContent,
     IonPage,
     IonIcon,
-    IonToast
+    IonToast,
+    IonItem
 
 } from '@ionic/vue';
 
@@ -67,11 +68,12 @@ export default {
     IonToast,
     IonSpinner,
     IonBadge,
-        IonIcon,
-        IonFab, 
-        IonFabButton,
-        IonContent,
-        IonPage,
+    IonIcon,
+    IonFab, 
+    IonFabButton,
+    IonContent,
+    IonPage,
+    IonItem
     },
     data() {
         return {

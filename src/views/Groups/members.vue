@@ -27,13 +27,6 @@
               </ion-checkbox>
           </ion-item>
 
-          <ion-item v-if="getStudentsFromSearchText.length==0">
-            <div id="add-new-member">
-              <p class="ion-margin">The <span>id</span> you are looking for does not exists. Do you want to add?</p>
-              <ion-button v-on:click="openAddNewMember=true" color="success">Add</ion-button>
-            </div>
-          </ion-item>
-
         </ion-list>
         <div class="no-items" v-else>
           <p>No members yet</p>
@@ -108,7 +101,6 @@ export default ({
       students:[],
       showSaveChanges:false,
       searchText:"",
-      openAddNewMember:false,
       openLoading:false,
       error_message:null
     }
@@ -131,9 +123,7 @@ export default ({
        },
   },
    methods: {
-     dissmissAlertAddNewMember(){
-       this.openAddNewMember=false
-     },
+
      saveChanges(){
         this.openLoading=true
         this.error_message=null

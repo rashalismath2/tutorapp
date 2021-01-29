@@ -42,7 +42,17 @@ export default {
               })
        
         },
-
+        deleteUserFromTheGroup:(state,payload)=>{
+            state.groups=state.groups.map((group)=>{
+                if(group.id==payload.group_id){
+                    group.students=group.students.filter(student=>{
+                      return student.student_id!==payload.student_id
+                  })
+                  return group
+                }
+                return group
+              })
+        },
         updateStudentStatus:(state,payload)=>{
             state.groups=state.groups.map(group=>{
                 if(group.id==payload.groupId){
