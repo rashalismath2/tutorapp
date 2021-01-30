@@ -2,11 +2,11 @@
   <ion-page>
     <ion-tabs >
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="schedule" :href="'/group/'+groupId+'/TabAllContacts'">
+        <ion-tab-button :selected=tabSelected tab="allContacts" :href="'/contacts/'+grpId+'/TabAllContacts/'">
           <ion-label>Contacts</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="speakers" :href="'/group/'+groupId+'/TabRequests'">
+        <ion-tab-button tab="tab" :href="'/contacts/'+grpId+'/TabRequests/'">
           <ion-label>Requests</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
@@ -28,7 +28,6 @@ import {
 // import { calendar, personCircle } from 'ionicons/icons';
 
 export default {
-    props:["groupId"],
     components: { 
         IonLabel, 
         IonPage, 
@@ -38,8 +37,12 @@ export default {
      },
     data() {
         return {
-      
+          grpId:null,
+          tabSelected:true
         }
+    },
+    created() {
+      this.grpId=this.$route.params.group_id
     },
 
 };

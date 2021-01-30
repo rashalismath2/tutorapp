@@ -7,13 +7,13 @@
     </ion-header>
     
     <ion-content >
-        <ion-tabs >
+        <ion-tabs  @ionTabsWillChange="beforeTabChange" @ionTabsDidChange="afterTabChange">
         <ion-tab-bar slot="top">
-          <ion-tab-button tab="tests"  href="/Home/TabTests">
+          <ion-tab-button :selected=testsTabSelected tab="tests"  href="/home/TabTests">
             <ion-label>Tests</ion-label>
           </ion-tab-button>
 
-          <ion-tab-button tab="groups" href="/Home/TabGroups">
+          <ion-tab-button :selected=groupsTabSelected tab="groups" href="/home/TabGroups">
             <ion-label>Groups</ion-label>
           </ion-tab-button>
         </ion-tab-bar>
@@ -50,14 +50,35 @@ export default defineComponent({
     IonToolbar
   },
   // beforeCreate(){},
-
+  data() {
+    return {
+      groupsTabSelected:false,
+      testsTabSelected:false,
+      
+    }
+  },
   mounted() {
     
   },
   beforeCreate() {
     this.$store.dispatch("AuthUser/initiateAuthState")
   },
+  methods:{
+    beforeTabChange(e){
+      if(e.tab=="tests"){
+        this.testsTabSelected=true
+        this.groupsTabSelected=false
+      }
+      else{
+          this.testsTabSelected=false
+        this.groupsTabSelected=true
+      }
 
+    },
+    afterTabChange(){
+      
+    }
+  }
 
 });
 

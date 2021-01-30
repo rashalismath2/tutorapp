@@ -4,7 +4,7 @@
         <ion-spinner v-show="showLoading" name="crescent"></ion-spinner>
         <ion-item  v-for="(group,index) in groups" v-bind:key="index">
               <div class="tab-items">
-                <router-link :to="{name:'group',params:{id:group.id}}">
+                <router-link exact :to="{name:'group',params:{id:group.id}}">
                   <p class="tab-item-title">
                     {{group.groupName}}
                   </p>
@@ -22,7 +22,7 @@
         </ion-item>
         
         <div v-if="groups.length==0 && !showLoading" class="no-items" >
-          <p>No groups yet</p>
+          <p>No groups have been created yet</p>
         </div>
 
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
@@ -86,23 +86,37 @@ export default {
     },
 
     created() {
-      this.showLoading=true
+      this.getroupsData()
+
+    },
+
+  methods: {
+    getroupsData(){
+     this.showLoading=true
       this.error_message=null
-      axios.get(process.env.VUE_APP_BACKEND_API+"/master/groups",{
+
+      this.groups=this.$store.getters["Groups/getGroups"]
+      if(this.groups.length==0){
+          axios.get(process.env.VUE_APP_BACKEND_API+"/master/groups",{
             headers:{
                   Authorization:"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
             }
-      })
-      .then(res=>{
-        this.$store.commit("Groups/setGroups",res.data)
-        this.groups=res.data
-        this.showLoading=false
-      })
-      .catch(()=>{
-        this.showLoading=false
-        this.error_message="Something went wrong"
-      })
-    },
+          })
+          .then(res=>{
+            this.$store.commit("Groups/setGroups",res.data)
+            this.groups=res.data
+            this.showLoading=false
+          })
+          .catch(()=>{
+            this.showLoading=false
+            this.error_message="Something went wrong"
+          })
+      }
+
+      this.showLoading=false
+      this.error_message=null
+    }
+  },
 
 };
 </script>

@@ -204,13 +204,13 @@ export default {
         
         if(requests.length!=0){
           this.members=requests.filter(req=>{
-            return req.groupId==this.$route.params.id
+            return req.groupId==this.$route.params.group_id
           })[0]
         }
         console.log(this.members," mem")
         if(this.members!=null && this.members.length==0){
           axios.get(
-            process.env.VUE_APP_BACKEND_API+"/master/request?group_id="+this.$route.params.id,
+            process.env.VUE_APP_BACKEND_API+"/master/request?group_id="+this.$route.params.group_id,
             {
               headers:{
                     Authorization:"Bearer "+this.$store.getters["AuthUser/getAccessToken"]

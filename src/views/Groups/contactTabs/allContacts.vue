@@ -93,8 +93,7 @@ export default {
       this.searchText=text.target.value
     },
     closeContactsModel(){
-      this.$router.push({name:"group"})
-      this.emitter.emit("closeContactsModel");
+      this.$router.push({name:"group",params:{id:this.$route.params.group_id}})
     },
 
     async deleteMemberConfirm(member) {
@@ -126,7 +125,7 @@ export default {
         this.startDelete=true
         this.error_message=null
         axios.delete(
-        process.env.VUE_APP_BACKEND_API+"/master/groups/"+this.$route.params.id+"/students/"+member.student_id,
+        process.env.VUE_APP_BACKEND_API+"/master/groups/"+this.$route.params.group_id+"/students/"+member.student_id,
         {
           headers:{
                 Authorization:"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
@@ -157,7 +156,7 @@ export default {
       var group=this.$store.getters["Groups/getGroups"]
       
       group=group.filter(group=>{
-          return group.id==this.$route.params.id
+          return group.id==this.$route.params.group_id
       })[0]
       this.members=group.students
   },

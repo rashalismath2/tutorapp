@@ -7,11 +7,13 @@ import Register from "../views/Authentication/Register.vue"
 
 import Group from "../views/Groups/group.vue"
 
+import Contact from "../views/Groups/contacts.vue"
+
 
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/home'
   },
 
   {
@@ -50,6 +52,11 @@ const routes = [
     path: '/group/:id',
     name: 'group',
     component: Group,
+  },
+  {
+    path:"/contacts/:group_id",
+    name:"contacts",
+    component:Contact,
     children:[
       {
         path: 'TabRequests',
@@ -62,7 +69,7 @@ const routes = [
         component: ()=>import("../views/Groups/contactTabs/allContacts.vue")
       }
     ]
-  },
+  }
 
 ]
 

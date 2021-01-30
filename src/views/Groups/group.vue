@@ -2,9 +2,11 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-          <ion-buttons slot="start">
-              <ion-back-button v-on:click="goToHome"></ion-back-button>
-          </ion-buttons>
+
+        <ion-buttons @click="jumpToHome" slot="start" >
+          <ion-icon  :icon="arrowBack"></ion-icon>
+        </ion-buttons >
+          
           <ion-buttons @click="presentActionSheet" slot="end">
               <ion-icon  :icon="ellipsisVerticalSharp"></ion-icon>
           </ion-buttons>
@@ -48,23 +50,17 @@
                 <members  v-on:cancelMembersModal="cancelMembersModal" />
             </ion-modal>
 
-            <ion-modal
-              :is-open="openContactsModel">
-                <Contacts :groupId="groupId" />
-            </ion-modal>
-
     </ion-content>
   </ion-page>
 </template>
 
 <script >
 
-
 import members from "./members.vue"
-import Contacts from "./contacts.vue"
 
 import {ellipsisVerticalSharp,
   close, 
+  arrowBack,
   share, peopleCircle,at} from "ionicons/icons"
 
 import axios from "axios"
@@ -80,13 +76,11 @@ import {
   IonTextarea,
   IonInput,
   IonButton,
-  IonButtons,IonBackButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+  IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
 
 
 export default {
-  name: 'Home',
   components: {
-    Contacts,
     IonModal,
     members,
     IonIcon,
@@ -97,7 +91,7 @@ export default {
     IonItem,
     IonTextarea,
     IonInput,
-    IonButtons,IonBackButton,
+    IonButtons,
     IonContent,
     IonHeader,
     IonPage,
@@ -108,6 +102,7 @@ export default {
       return {
         ellipsisVerticalSharp,
         openModel:false,
+        arrowBack,
           group:{},
           readOnly:true,
           groupName:"",
@@ -115,19 +110,16 @@ export default {
           openLoading:false,
           error_message:null,
           error_text:"",
-          openContactsModel:false,
           groupId:this.$route.params.id
       }
   },
+
   mounted() {
-    
-    this.emitter.on("closeContactsModel", () => {
-     this.openContactsModel=false
-    });
+
 
   },
   created() {
-
+    
     var groups=this.$store.getters["Groups/getGroups"]
         
     this.group=groups.filter(group=>{
@@ -139,12 +131,15 @@ export default {
 
       
   },
+    watch: {
+       
+    },
   methods: {
     cancelMembersModal(){
       this.openModel=false
     },
-    goToHome(){
-      this.$router.push({name:"Home"})
+    jumpToHome(){
+      this.$router.replace({name:"TabGroups"});
     },
     cancelEdit(){
       this.error_message=null
@@ -212,8 +207,7 @@ export default {
               role: 'destructive',
               icon: at,
               handler: () => {
-                this.$router.push({name:"TabAllContacts"})
-                this.openContactsModel=true
+                this.$router.push({name:"TabAllContacts",params:{group_id:this.$route.params.id}})
               },
             },
             {

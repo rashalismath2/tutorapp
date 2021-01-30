@@ -1,9 +1,6 @@
 <template>
   <ion-page>
     <ion-content class="ion-padding">
-
-        
-
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
             <ion-fab-button>
                 <ion-icon :icon="add"></ion-icon>
@@ -19,6 +16,8 @@
 <script>
 
 import {add} from "ionicons/icons"
+
+
 
 import {
     IonFab, 
@@ -43,6 +42,9 @@ export default {
             add,
             tests:[]
         }
+    },
+    created() {
+       
     },
 
 };
