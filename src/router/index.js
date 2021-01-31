@@ -13,7 +13,7 @@ import Contact from "../views/Groups/contacts.vue"
 const routes = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/login'
   },
 
   {

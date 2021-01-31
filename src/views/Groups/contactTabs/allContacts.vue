@@ -10,13 +10,17 @@
     <ion-content >
         <ion-spinner v-show="showLoading" name="crescent"></ion-spinner>
         <ion-list v-if="members.length!==0">
-          <ion-item id="members-item"  v-bind:key="member.id" v-for="(member) in getStudentsFromSearchText">
-            <ion-avatar>
-              <img :src="member.student.profile_img">
-            </ion-avatar>
+          <div id="members-item"  v-bind:key="member.id" v-for="(member) in getStudentsFromSearchText">
+            <div id="members-item-avatar">
+              <ion-avatar>
+                <img :src="member.student.profile_img">
+              </ion-avatar>
+            </div>
             <div id="member-details">
-              <ion-label>{{member.student.firstName}} {{member.student.lastName}}</ion-label>
-              <ion-label>{{member.student.email}}</ion-label>
+              <div id="member-details-header" >
+                <ion-label>{{member.student.firstName}} {{member.student.lastName}}</ion-label>
+              </div>
+              
               <ion-label>{{member.group_student_id}}</ion-label>
               <ion-label>{{member.student.school}}</ion-label>
               <ion-button color="danger" :fill="startDelete==member.id?'outline':'solid'" :disabled="startDelete==member.id" v-on:click="deleteMemberConfirm(member)">
@@ -25,7 +29,7 @@
               </ion-button>
             </div>
 
-          </ion-item>
+          </div>
         </ion-list>
 
        <div v-show="!showLoading && members.length==0" class="no-items" v-else>
@@ -53,7 +57,6 @@
 
 import {
   IonLabel,
-  IonItem,
   IonList,
   IonHeader,
   IonToolbar,
@@ -72,7 +75,6 @@ import axios from "axios"
 export default {
   components: {
     IonLabel,
-    IonItem,
     IonList,
     IonToast,
     IonHeader,
@@ -94,7 +96,7 @@ export default {
       this.searchText=text.target.value
     },
     closeContactsModel(){
-      this.$router.push({name:"group",params:{id:this.$route.params.group_id}})
+      this.$router.replace({name:"group",params:{id:this.$route.params.group_id}})
     },
 
     async deleteMemberConfirm(member) {
@@ -149,7 +151,7 @@ export default {
   computed:{
     getStudentsFromSearchText(){
         return this.members.filter(student=>{
-          return student.group_student_id.match(this.searchText)
+          return student.group_student_id.toLowerCase().match(this.searchText.toLowerCase())
         })
       },
   },
@@ -190,29 +192,48 @@ ion-content{
 ion-list{
       --ion-background-color: var(--ion-background-color);
 }
+
 #members-item{
-    display: flex;
-    align-items: flex-start;
+  width: 100%;
+  display: flex;
+  color:black
 }
-#members-item ion-avatar{
-  width: 50px;
-  height: auto;
+
+#members-item-avatar{
+    width: 60px;
+    margin: 5px;
+}
+#members-item-avatar ion-avatar{
+    width: 100%;
+    height: auto;
 }
 #member-details{
-  width: -webkit-fill-available;
-  margin-left: 15px;
+width: calc(100% - 70px);
+    margin: 5px 5px 15px 8px;
+    padding-right: 15px;
+}
+
+#member-details{
+  border-bottom: 1px solid var(--ion-color-secondary);
+    padding-bottom: 5px;
+}
+
+#member-details-header{
+  font-weight: bold;
+    font-size: 1.1rem;
+  display: flex;
+  width:fit-content;
+}
+#member-details ion-label{
+  margin-bottom: 5px;
+  font-family: monospace;
+  
 }
 #member-details ion-button{
   float: right;
 }
-#member-details ion-label:first-child{
-  font-weight: bold;
-}
 #member-details ion-label{
-  font-family: monospace;
-    margin-bottom: 2px;
-    color: var(--ion-text-color);
-    text-transform: capitalize;
+  display: block;
 }
 
 </style>

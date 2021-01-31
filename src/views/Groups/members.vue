@@ -11,12 +11,15 @@
         <ion-searchbar placeholder="Student ID" v-on:ionChange="saveSearchText"></ion-searchbar>
         <ion-list v-if="students!==[]">
           <ion-item  v-bind:key="member.id" v-for="(member) in getStudentsFromSearchText">
-            <ion-avatar>
-              <img :src="member.student.profile_img">
-            </ion-avatar>
+             <div id="members-item-avatar">
+                <ion-avatar>
+                  <img :src="member.student.profile_img">
+                </ion-avatar>
+              </div>
             <div id="member-details">
-              <ion-label>{{member.student.firstName}} {{member.student.lastName}}</ion-label>
-              <ion-label>{{member.student.email}}</ion-label>
+              <div id="member-details-header" >
+                <ion-label>{{member.student.firstName}} {{member.student.lastName}}</ion-label>
+              </div>
               <ion-label>{{member.group_student_id}}</ion-label>
             </div>
 
@@ -121,7 +124,7 @@ export default ({
   computed:{
       getStudentsFromSearchText(){
          return this.students.filter(student=>{
-           return student.group_student_id.match(this.searchText)
+           return student.group_student_id.toLowerCase().match(this.searchText.toLowerCase())
          })
        },
   },
@@ -235,18 +238,6 @@ ion-button{
 ion-content{
   --ion-background-color: var(--ion-background-color);
 }
-#member-details{
-  margin-left: 15px;
-}
-#member-details ion-label:first-child{
-  font-weight: bold;
-}
-#member-details ion-label{
-  font-family: monospace;
-    margin-bottom: 2px;
-    color: var(--ion-text-color);
-    text-transform: capitalize;
-}
 
 ion-list{
       --ion-background-color: var(--ion-background-color);
@@ -255,6 +246,39 @@ ion-spinner{
   color:white
 }
 
+#members-item{
+  width: 100%;
+  display: flex;
+  color:black
+}
+
+#members-item-avatar{
+    width: 60px;
+    margin: 5px;
+}
+#members-item-avatar ion-avatar{
+    width: 100%;
+    height: auto;
+}
+#member-details{
+width: calc(100% - 70px);
+    margin: 5px 5px 15px 8px;
+    padding-right: 15px;
+}
+
+#member-details{
+    padding-bottom: 5px;
+}
+#member-details-header{
+  font-weight: bold;
+    font-size: 1.1rem;
+  display: flex;
+  width:fit-content;
+}
+#member-details ion-label{
+  margin-bottom: 5px;
+  font-family: monospace;
+}
 #add-new-member p span{
   font-weight: bold;
 }

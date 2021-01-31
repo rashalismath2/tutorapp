@@ -4,12 +4,14 @@
     <ion-content>
         <ion-spinner v-show="showLoading" name="crescent"></ion-spinner>
         <ion-list v-if="members.length!==0">
-          <ion-item id="members-item"  v-bind:key="member.id" v-for="(member) in members">
-            <ion-avatar>
-              <img :src="member.student.profile_img">
-            </ion-avatar>
+          <div id="members-item"  v-bind:key="member.id" v-for="(member) in members">
+            <div id="members-item-avatar">
+              <ion-avatar>
+                  <img :src="member.student.profile_img">
+              </ion-avatar>
+            </div>
             <div id="member-details">
-              <div class="clearfix">
+              <div id="member-details-header" >
                 <ion-label>{{member.student.firstName}} {{member.student.lastName}}</ion-label>
                 <ion-icon v-on:click="changeHiddenFields(member)" :icon="caretDown" slot="end"></ion-icon>
               </div>
@@ -17,17 +19,19 @@
               <ion-label>{{member.group_student_id}}</ion-label>
               <ion-label>{{member.student.school}}</ion-label>
               <div v-show="showHiddentFields==member.id" id="requests-hidden-fields">
-                  <ion-item>
-                    <div>
-                       <ion-label v-bind:class="error_text"  position="floating">Student ID</ion-label>
-                      <ion-input  v-model="studentId"></ion-input>
+                  <div>
+                    <div id="student-id">
+                        <ion-item >
+                            <ion-label v-bind:class="error_text"  position="floating">Student ID</ion-label>
+                            <ion-input  v-model="studentId"></ion-input>
+                        </ion-item>
                     </div>
-                    <div>
+                    <div id="request-id-validate">
                       <ion-icon :class="'icon-validate '+ iconValidated" v-if="!validating" v-on:click="validateId" :icon="checkmark"></ion-icon>
                       <ion-spinner slot="end" v-if="validating" color="danger" name="crescent"></ion-spinner>
                     </div>
-                  </ion-item>
-                  <ion-item >
+                  </div>
+                  <ion-item id="allow-member-in">
                     <ion-label>Allow in group</ion-label>
                     <ion-checkbox
                       slot="end"
@@ -50,7 +54,7 @@
 
             </div>
 
-          </ion-item>
+          </div>
         </ion-list>
 
        <div v-show="!showLoading && members.length==0" class="no-items" v-else>
@@ -340,38 +344,67 @@ ion-button ion-spinner{
 }
 
 #members-item{
-    display: flex;
-    margin: 5px 0;
-    align-items: flex-start;
-}
-#members-item ion-avatar{
-  width: 50px;
-  height: auto;
-}
-#member-details{
-  width: -webkit-fill-available;
-  margin-left: 15px;
-}
-#member-details ion-button{
-  float: right;
-  margin:15px 0 15px 15px; 
-}
-#member-details ion-label:first-child{
-  font-weight: bold;
-}
-#member-details ion-label{
-  font-family: monospace;
-    margin-bottom: 2px;
-    color: var(--ion-text-color);
-    text-transform: capitalize;
+  width: 100%;
+  display: flex;
+  color:black
 }
 
-#member-details div:first-child ion-label{
-  float: left;
-  margin: 0px;
+#members-item-avatar{
+    width: 60px;
+    margin: 5px;
 }
-#member-details div:first-child ion-icon{
-  float: right;
+#members-item-avatar ion-avatar{
+    width: 100%;
+    height: auto;
+}
+#member-details{
+width: calc(100% - 70px);
+    margin: 5px 5px 15px 8px;
+    padding-right: 15px;
+}
+
+#member-details{
+  border-bottom: 1px solid var(--ion-color-secondary);
+    padding-bottom: 5px;
+}
+
+#member-details-header{
+  font-weight: bold;
+    font-size: 1.1rem;
+  display: flex;
+  width:fit-content;
+}
+#member-details ion-label{
+  margin-bottom: 5px;
+  font-family: monospace;
+}
+#allow-member-in{
+  width: fit-content;
+}
+
+#requests-hidden-fields {
+  margin-top: 15px;
+}
+#requests-hidden-fields >div{
+  display: flex;
+}
+#student-id{
+  width: calc(100% - 20px);
+}
+#student-id ion-label{
+  color:var(--ion-color-primary);
+}
+
+#request-id-validate{
+  display: flex;
+  align-items: center;
+  width:20px;
+}
+
+#requests-controls{
+      display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
 }
 
 </style>
