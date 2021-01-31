@@ -140,6 +140,14 @@ export default {
               })
               .then(res=>{
                 this.$store.commit("Groups/AddNewGroup",res.data)
+                var newGroup={
+                ...res.data,
+                "students":[],
+                "allowed_std_count":0,
+                "not_allowed_std_count":0
+              }
+              this.groups=[newGroup,...this.groups]
+
                 this.createNewGroupSpinner=false
                 this.openCreateNewGroupModal=false
               })

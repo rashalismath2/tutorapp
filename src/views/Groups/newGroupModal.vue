@@ -4,7 +4,7 @@
 
     <ion-page>
         <ion-header :translucent="true">
-            <ion-toolbar color="primary">
+            <ion-toolbar >
                 <ion-button  slot="end" v-on:click="closeCreateNewGroupModal(false)" fill="clear">Cancel</ion-button>
             </ion-toolbar>
         </ion-header>
@@ -21,7 +21,7 @@
             </ion-item>
             
             <ion-item>
-                <ion-button v-on:click="closeCreateNewGroupModal(true)" color="primary" expand="full">CREATE</ion-button>
+                <ion-button size="default" slot="end" v-on:click="closeCreateNewGroupModal(true)" color="primary" expand="full">CREATE</ion-button>
             </ion-item>
             
         </ion-content>
@@ -80,7 +80,8 @@ export default ({
     },
     methods: {
         closeCreateNewGroupModal(close){
-            if(this.groupDescription.replace(/\s+/g, '')!="" && this.groupName.replace(/\s+/g, '')!=""){
+           if(close){
+                if(this.groupDescription.replace(/\s+/g, '')!="" && this.groupName.replace(/\s+/g, '')!=""){
                 this.$emit("createNewGroup",{
                     data:close?true:false,
                     name:this.groupName,
@@ -90,7 +91,31 @@ export default ({
             else{
                 this.error_message="Please dont not leave fileds empty"
             }
+           }
+           else{
+                 this.$emit("createNewGroup",{
+                    data:close?true:false,
+                    name:this.groupName,
+                    description:this.groupDescription,
+                })
+           }
         }
     },
 });
 </script>
+
+<style scoped>
+    .md,.ios {
+  --ion-background-color: var(--ion-color-primary);
+}
+.md ion-item,.ios ion-item{
+  --ion-background-color: #fff;
+  --ion-text-color: #000;
+}
+.md, .ios {
+    --ion-background-color: white;
+}
+ion-toolbar ion-button{
+    color: white;
+}
+</style>

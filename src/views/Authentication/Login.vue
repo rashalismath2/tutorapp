@@ -108,7 +108,7 @@ export default{
                 this.$store.dispatch("AuthUser/setAccessToken",res.data);
                 this.loadingDialog=false
                 AuthUser.login(()=>{
-                    this.$router.replace({name:"Home"})
+                    this.$router.replace({name:"TabTests"})
                 })
             })
             .catch(()=>{

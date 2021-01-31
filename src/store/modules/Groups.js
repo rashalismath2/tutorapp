@@ -14,6 +14,7 @@ export default {
             state.groups=payload
         },
         AddNewGroup:(state,payload)=>{
+           
             var newGroup={
                 ...payload,
                 "students":[],
@@ -21,6 +22,7 @@ export default {
                 "not_allowed_std_count":0
             }
             state.groups=[newGroup,...state.groups]
+            
         },
         updateGroup:(state,payload)=>{
             var groups=state.groups.map(group=>{

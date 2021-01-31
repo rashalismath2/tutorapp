@@ -233,8 +233,23 @@ ion-toolbar{
 .alert-wrapper.sc-ion-alert-md button,.alert-wrapper.sc-ion-alert-ios button{
   color:white;
 }
+.alert-head.sc-ion-alert-md h2,.alert-head.sc-ion-alert-ios h2{
+  color:white;
+}
+.alert-head.sc-ion-alert-md+.alert-message.sc-ion-alert-md,
+.alert-head.sc-ion-alert-md+.alert-message.sc-ion-alert-ios{
+  color:white;
+}
 .action-sheet-group.sc-ion-action-sheet-md,.action-sheet-group.sc-ion-action-sheet-ios{
   background:var(--ion-color-secondary);
+}
+.action-sheet-container,.action-sheet-group,.action-sheet-button{
+  --color:white;
+  color:white;
+}
+.action-sheet-button.sc-ion-action-sheet-md,.action-sheet-button.sc-ion-action-sheet-ios{
+  --color:white;
+  color:white;
 }
 
 ion-tab-button ion-label{

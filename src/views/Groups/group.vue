@@ -311,6 +311,7 @@ ion-content{
 
 ion-action-sheet.actionSheetCss{
   --ion-background-color: var(ion-color-secondary) !important;
+  
 }
 
 

@@ -374,6 +374,11 @@ width: calc(100% - 70px);
   display: flex;
   width:fit-content;
 }
+
+#member-details-header ion-icon{
+  float: right;
+}
+
 #member-details ion-label{
   margin-bottom: 5px;
   font-family: monospace;
