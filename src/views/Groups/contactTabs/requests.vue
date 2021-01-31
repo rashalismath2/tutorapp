@@ -9,14 +9,23 @@
               <img :src="member.student.profile_img">
             </ion-avatar>
             <div id="member-details">
-              <ion-label>{{member.student.firstName}} {{member.student.lastName}}</ion-label>
-              <ion-label>{{member.student.email}}</ion-label>
+              <div class="clearfix">
+                <ion-label>{{member.student.firstName}} {{member.student.lastName}}</ion-label>
+                <ion-icon v-on:click="changeHiddenFields(member)" :icon="caretDown" slot="end"></ion-icon>
+              </div>
+              
               <ion-label>{{member.group_student_id}}</ion-label>
               <ion-label>{{member.student.school}}</ion-label>
-              <div id="requests-hidden-fields">
+              <div v-show="showHiddentFields==member.id" id="requests-hidden-fields">
                   <ion-item>
-                    <ion-label v-bind:class="error_text"  position="floating">Student ID</ion-label>
-                    <ion-input v-on:ionBlur="validateId" v-model="studentId"></ion-input>
+                    <div>
+                       <ion-label v-bind:class="error_text"  position="floating">Student ID</ion-label>
+                      <ion-input  v-model="studentId"></ion-input>
+                    </div>
+                    <div>
+                      <ion-icon :class="'icon-validate '+ iconValidated" v-if="!validating" v-on:click="validateId" :icon="checkmark"></ion-icon>
+                      <ion-spinner slot="end" v-if="validating" color="danger" name="crescent"></ion-spinner>
+                    </div>
                   </ion-item>
                   <ion-item >
                     <ion-label>Allow in group</ion-label>
@@ -26,17 +35,19 @@
                       :modelValue="isAllowed">
                     </ion-checkbox>
                   </ion-item>
+
+                  <div id="requests-controls">
+                    <ion-button v-on:click="submitAccept(member)" :fill="acceptLoading==member.id?'outline':'solid'" :disabled="studentId=='' || !validated" color="success">
+                      <ion-spinner v-if="acceptLoading==member.id" color="success" name="crescent"></ion-spinner>
+                      <span v-else>Accept</span>
+                    </ion-button>
+                    <ion-button v-on:click="submitDelete(member)" :fill="loadDelete==member.id?'outline':'solid'" :disabled="loadDelete==member.id" color="danger">
+                      <ion-spinner v-if="loadDelete==member.id" color="danger" name="crescent"></ion-spinner>
+                      <span v-else>Decline</span>
+                    </ion-button>
+                  </div> 
               </div>
-              <div id="requests-controls">
-                  <ion-button v-on:click="submitAccept(member)" :fill="acceptLoading?'outline':'solid'" :disabled="studentId=='' || acceptLoading" color="success">
-                    <ion-spinner v-if="acceptLoading" color="success" name="crescent"></ion-spinner>
-                    <span v-else>Accept</span>
-                  </ion-button>
-                  <ion-button v-on:click="submitDelete" :fill="loadDelete?'outline':'solid'" :disabled="loadDelete" color="danger">
-                    <ion-spinner v-if="loadDelete" color="danger" name="crescent"></ion-spinner>
-                    <span v-else>Decline</span>
-                  </ion-button>
-              </div>
+
             </div>
 
           </ion-item>
@@ -52,6 +63,7 @@
           keyboard-close=true
           :is-open="error_message!=null"
           v-bind:message="error_message"
+          position="middle"
           duration="3000"
       >
       </ion-toast>
@@ -64,7 +76,10 @@
 
 import axios from "axios"
 
+import {caretDown,checkmark} from 'ionicons/icons'
+
 import {
+  IonIcon,
   IonCheckbox,
   IonInput,
   IonButton,
@@ -81,6 +96,7 @@ import {
 export default {
 
   components: {
+    IonIcon,
     IonCheckbox,
     IonInput,
       IonButton,
@@ -95,21 +111,36 @@ export default {
   
   data() {
     return {
+      caretDown,
+      checkmark,
       showLoading:false,
       members:[],
       error_message:null,
       studentId:"",
-      acceptLoading:false,
-      loadDelete:false,
+      acceptLoading:"",
+      loadDelete:"",
       error_text:"",
       isAllowed:true,
-      validated:false
+      validated:false,
+      showHiddentFields:"",
+      validating:false,
+      iconValidated:"icon-validate-danger",
     }
   },
 
   methods: {
+ 
+    changeHiddenFields(member){
+      this.showHiddentFields=member.id
+      if(this.studentId!==member.student_id){
+        this.studentId=""
+        this.validating=false
+      }
+    },
     validateId(){
-      if(this.studentId.length>2){
+      if(this.studentId.replace(/\s+/g, '').length>2){
+          this.validating=true
+          this.validated=false
           this.error_message=null
           this.error_text=""
          axios.post(
@@ -126,22 +157,27 @@ export default {
             if(res.data.Message=="Valid"){
               this.validated=true
               this.error_text=""
+              this.validating=false
               this.error_message=null
+              this.iconValidated="icon-validate-success"
             }
           })
           .catch((err)=>{
+            this.iconValidated="icon-validate-danger"
             if(err.response){
               
               if(
                 err.response.data && err.response.data.group_student_id[0]=="The group student id has already been taken."
                 ){
                     this.validated=false
+                    this.validating=false
                     this.error_message="Student Id already exists. Please choose a unique ID"
                     this.error_text="error-text"
                 }
             }
             else{
               this.validated=false
+              this.validating=false
               this.error_message="Something went wrong! Please try again."
               this.error_text="error-text"
             }
@@ -149,11 +185,12 @@ export default {
           })
       }
 
+
     },
     submitAccept(member){
-      if(this.studentId!=="" && this.validated){
+      if(this.studentId.replace(/\s+/g, '')!=="" && this.validated){
      
-        this.acceptLoading=true
+        this.acceptLoading=member.id
         this.error_message=null
         this.error_text=""
 
@@ -161,9 +198,7 @@ export default {
           process.env.VUE_APP_BACKEND_API+"/master/request/accept",
           {
               "requestId":member.id,
-              "group_id":member.group_id,
               "allowed":this.isAllowed,
-              "student_id":member.student_id,
               "grpStdId":this.studentId
           },
           {
@@ -176,14 +211,21 @@ export default {
             this.members=this.members.filter(requests=>{
               return requests.student_id!==member.student_id
             })
+
+            member={
+                ...member,
+                group_student_id:this.studentId
+              }
+
             this.$store.commit("Requests/RemoveMemberFromRequest",member)
+            this.$store.commit("Groups/AddRequestMemberToTheGroup",member)
             this.student_id=""
-            this.acceptLoading=false
-            this.error_message="Request accepted"
+            this.acceptLoading=""
+            this.error_message="Request was accepted"
             this.error_text=""
           })
           .catch(()=>{
-            this.acceptLoading=false
+            this.acceptLoading=""
             this.error_message="Something went wrong! Please try again."
             this.error_text="error-text"
           })
@@ -194,7 +236,37 @@ export default {
       }
     },
 
-    submitDelte(){}
+    submitDelete(member){
+        this.loadDelete=member.id
+        this.error_message=null
+
+         axios.delete(
+          process.env.VUE_APP_BACKEND_API+"/master/request/decline",
+          {
+            headers:{
+                  Authorization:"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
+            },
+            data:{
+              "requestId":member.id
+            }
+          })
+          .then(()=>{
+            
+            this.members=this.members.filter(requests=>{
+              return requests.student_id!==member.student_id
+            })
+
+            this.$store.commit("Requests/RemoveMemberFromRequest",member)
+            this.student_id=""
+            this.loadDelete=""
+            this.error_message="Request was deleted"
+            this.error_text=""
+          })
+          .catch(()=>{
+            this.loadDelete=""
+            this.error_message="Something went wrong! Please try again."
+          })
+    }
   },
   created() {
         this.showLoading=true
@@ -244,14 +316,32 @@ ion-content{
 .error-text{
     color:var(--ion-color-danger)
 }
+ion-item ion-spinner{
+    width: 20px;
+    color: red;
+    margin: 0;
+}
+
 ion-list{
       --ion-background-color: var(--ion-background-color);
 }
 ion-button ion-spinner{
       width: 50px !important;
 }
+
+.icon-validate {
+
+}
+.icon-validate-danger{
+  color: var(--ion-color-danger);
+}
+.icon-validate-success{
+  color: var(--ion-color-success);
+}
+
 #members-item{
     display: flex;
+    margin: 5px 0;
     align-items: flex-start;
 }
 #members-item ion-avatar{
@@ -264,6 +354,7 @@ ion-button ion-spinner{
 }
 #member-details ion-button{
   float: right;
+  margin:15px 0 15px 15px; 
 }
 #member-details ion-label:first-child{
   font-weight: bold;
@@ -273,6 +364,14 @@ ion-button ion-spinner{
     margin-bottom: 2px;
     color: var(--ion-text-color);
     text-transform: capitalize;
+}
+
+#member-details div:first-child ion-label{
+  float: left;
+  margin: 0px;
+}
+#member-details div:first-child ion-icon{
+  float: right;
 }
 
 </style>

@@ -8,7 +8,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content >
-        <ion-searchbar v-on:ionChange="saveSearchText"></ion-searchbar>
+        <ion-searchbar placeholder="Student ID" v-on:ionChange="saveSearchText"></ion-searchbar>
         <ion-list v-if="students!==[]">
           <ion-item  v-bind:key="member.id" v-for="(member) in getStudentsFromSearchText">
             <ion-avatar>
@@ -37,6 +37,7 @@
             class="ion-margin"
             color="secondary"
             keyboard-close=true
+            position="middle"
             :is-open="error_message!=null"
             v-bind:message="error_message"
             duration="3000"
@@ -60,6 +61,7 @@
 import axios from "axios"
 
 import {
+  IonButton,
   IonToast,
   alertController ,
   IonSpinner,
@@ -79,6 +81,7 @@ export default ({
 
   name: 'Home',
   components: {
+    IonButton,
     IonToast,
     IonSpinner,
     IonFooter,

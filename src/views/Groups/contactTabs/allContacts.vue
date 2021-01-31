@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar color="primary">
-        <ion-searchbar v-on:ionChange="saveSearchText"></ion-searchbar>
+        <ion-searchbar placeholder="Student ID" v-on:ionChange="saveSearchText"></ion-searchbar>
         <ion-button  slot="end" v-on:click="closeContactsModel" fill="clear">Cancel</ion-button>
         
       </ion-toolbar>
@@ -19,8 +19,8 @@
               <ion-label>{{member.student.email}}</ion-label>
               <ion-label>{{member.group_student_id}}</ion-label>
               <ion-label>{{member.student.school}}</ion-label>
-              <ion-button color="danger" :fill="startDelete?'outline':'solid'" :disabled="startDelete" v-on:click="deleteMemberConfirm(member)">
-                <ion-spinner v-if="startDelete"  name="crescent"></ion-spinner>
+              <ion-button color="danger" :fill="startDelete==member.id?'outline':'solid'" :disabled="startDelete==member.id" v-on:click="deleteMemberConfirm(member)">
+                <ion-spinner v-if="startDelete==member.id"  name="crescent"></ion-spinner>
                 <span  v-else>DELETE</span>
               </ion-button>
             </div>
@@ -37,6 +37,7 @@
     <ion-toast
             class="ion-margin"
             color="secondary"
+            position="middle"
             keyboard-close=true
             :is-open="error_message!=null"
             v-bind:message="error_message"
@@ -85,7 +86,7 @@ export default {
       error_message:null,
       searchText:"",
       showLoading:false,
-      startDelete:false,
+      startDelete:"",
     }
   },
   methods: {
@@ -122,7 +123,7 @@ export default {
       return alert.present();
     },
     deleteMember(member){    
-        this.startDelete=true
+        this.startDelete=member.id
         this.error_message=null
         axios.delete(
         process.env.VUE_APP_BACKEND_API+"/master/groups/"+this.$route.params.group_id+"/students/"+member.student_id,
@@ -132,7 +133,7 @@ export default {
           }
         })
         .then(()=>{
-            this.startDelete=false
+            this.startDelete=""
             this.$store.commit("Groups/deleteUserFromTheGroup",member)
             this.members=this.members.filter(student=>{
                 return student.student_id!==member.student_id
@@ -140,7 +141,7 @@ export default {
             this.error_message='User deleted'
         })
         .catch(()=>{
-          this.startDelete=false
+          this.startDelete=""
           this.error_message='Something went wrong. Please try again later!'
         })
     }

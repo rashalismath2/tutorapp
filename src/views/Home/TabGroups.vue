@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-content class="">
-        <ion-spinner v-show="showLoading" name="crescent"></ion-spinner>
+        <ion-spinner class="loadSpinner" v-show="showLoading" name="crescent"></ion-spinner>
         <ion-item  v-for="(group,index) in groups" v-bind:key="index">
               <div class="tab-items">
                 <router-link exact :to="{name:'group',params:{id:group.id}}">
@@ -15,9 +15,7 @@
                     <ion-badge color="warning">{{group.not_allowed_std_count}}</ion-badge>
                   </p>
                 </router-link>
-                <div class="tab-item-icon">
-                  <ion-icon  :icon="ellipsisVerticalSharp"></ion-icon>
-                </div>
+
               </div>
         </ion-item>
         
@@ -26,26 +24,32 @@
         </div>
 
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-            <ion-fab-button>
-                <ion-icon :icon="add"></ion-icon>
+            <ion-fab-button :disabled="createNewGroupSpinner"  v-on:click="openCreateNewModal">
+              <ion-spinner name="crescent" v-if="createNewGroupSpinner"></ion-spinner>
+                <ion-icon v-else :icon="add"></ion-icon>
             </ion-fab-button>
         </ion-fab>
          <ion-toast
                 class="ion-margin"
                 color="secondary"
+                position="middle"
                 keyboard-close=true
                 :is-open="error_message!=null"
                 v-bind:message="error_message"
                 duration="3000"
             >
             </ion-toast>
+
+            <NewGroupModal v-on:createNewGroup="createNewGroup($event)" v-bind:openCreateNewGroupModal="openCreateNewGroupModal" />
     </ion-content>
   </ion-page>
 </template>
 
 <script>
 
-import {add,ellipsisVerticalSharp} from "ionicons/icons"
+import {add} from "ionicons/icons"
+
+import NewGroupModal from "../Groups/newGroupModal.vue"
 
 import axios from "axios"
 
@@ -65,6 +69,7 @@ import {
 export default {
 
   components: {
+    NewGroupModal,
     IonToast,
     IonSpinner,
     IonBadge,
@@ -78,10 +83,11 @@ export default {
     data() {
         return {
             add,
-            ellipsisVerticalSharp,
             groups:[],
             showLoading:false,
-            error_message:null
+            openCreateNewGroupModal:false,
+            error_message:null,
+            createNewGroupSpinner:false
         }
     },
 
@@ -112,10 +118,45 @@ export default {
             this.error_message="Something went wrong"
           })
       }
+      else{
+          this.showLoading=false
+          this.error_message=null
+      }
+    },
+    createNewGroup(data){
+          this.error_message=null
+          this.createNewGroupSpinner=true
+          this.openCreateNewGroupModal=false
+          if(data.data){
+             axios.post(process.env.VUE_APP_BACKEND_API+"/master/groups",
+              {
+                group_name:data.name,
+                group_description:data.description
+              },
+              {
+                headers:{
+                      Authorization:"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
+                }
+              })
+              .then(res=>{
+                this.$store.commit("Groups/AddNewGroup",res.data)
+                this.createNewGroupSpinner=false
+                this.openCreateNewGroupModal=false
+              })
+              .catch(()=>{
+                  this.error_message="Something went wrong! try again"
+                  this.createNewGroupSpinner=false
+                  this.openCreateNewGroupModal=false
+              })
+          }
+          else{
+                this.createNewGroupSpinner=false
+          }
 
-      this.showLoading=false
-      this.error_message=null
-    }
+    },
+    openCreateNewModal(){
+      this.openCreateNewGroupModal=true
+    },
   },
 
 };
@@ -127,5 +168,11 @@ ion-content{
   --ion-background-color: var(--ion-background-color);
 }
 
+ion-spinner{
+  color: white;
+}
+.loadSpinner{
+  color: var(--ion-color-primary) !important;
+}
 
 </style>

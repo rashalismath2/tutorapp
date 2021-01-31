@@ -27,6 +27,7 @@
 
 
 import { 
+
   IonTabs,
   IonTabBar,
   IonTabButton,
@@ -39,6 +40,7 @@ export default defineComponent({
 
   name: 'Home',
   components: {
+
       IonTabs,
     IonTabBar,
     IonTabButton,

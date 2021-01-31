@@ -13,6 +13,15 @@ export default {
         setGroups:(state,payload)=>{
             state.groups=payload
         },
+        AddNewGroup:(state,payload)=>{
+            var newGroup={
+                ...payload,
+                "students":[],
+                "allowed_std_count":0,
+                "not_allowed_std_count":0
+            }
+            state.groups=[newGroup,...state.groups]
+        },
         updateGroup:(state,payload)=>{
             var groups=state.groups.map(group=>{
                 if(group.id==payload.groupId){
@@ -20,6 +29,12 @@ export default {
                     group.description=payload.groupDescription
                 }
                 return group
+            })
+            state.groups=groups
+        },
+        RemoveGroup:(state,payload)=>{
+            var groups=state.groups.filter(group=>{
+                return group.id!=payload.id
             })
             state.groups=groups
         },
@@ -48,6 +63,16 @@ export default {
                     group.students=group.students.filter(student=>{
                       return student.student_id!==payload.student_id
                   })
+                  return group
+                }
+                return group
+              })
+        },
+        AddRequestMemberToTheGroup:(state,payload)=>{
+
+            state.groups=state.groups.map((group)=>{
+                if(group.id==payload.group_id){
+                    group.students=[payload,...group.students]
                   return group
                 }
                 return group

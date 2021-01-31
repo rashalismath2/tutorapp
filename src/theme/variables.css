@@ -211,6 +211,12 @@ http://ionicframework.com/docs/theming/ */
 }
 
 
+.clearfix::after{
+  content: "";
+  clear: both;
+  display: block;
+}
+
 
 ion-button ion-spinner{
   height: 100%;
@@ -218,6 +224,8 @@ ion-button ion-spinner{
 ion-toolbar{
   color: white;
 }
+
+
 
 .alert-wrapper.sc-ion-alert-md,.alert-wrapper.sc-ion-alert-ios{
   background:var(--ion-color-secondary);
@@ -246,7 +254,7 @@ ion-tab-button ion-label{
   letter-spacing: 1px;
 }
 .tab-items a {
-  width: calc(100% - 25px);
+  width: 100%;
   text-decoration: none;
   color: var(--ion-text-color);
 }
@@ -270,9 +278,6 @@ ion-tab-button ion-label{
   margin-left: 5px;
 }
 
-.tab-items .tab-item-icon {
-  width: 25px;
-}
 
 ion-spinner{
   color: var(--ion-color-primary);
