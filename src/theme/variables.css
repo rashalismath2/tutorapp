@@ -67,6 +67,32 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-light-tint: #f5f6f9;
 
   --font-size:18px;
+
+  --ion-background-color: #a4a4a4;
+  --ion-background-color-rgb: 164,164,164;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255,255,255;
+
+  --ion-color-step-50: #a9a9a9;
+  --ion-color-step-100: #adadad;
+  --ion-color-step-150: #b2b2b2;
+  --ion-color-step-200: #b6b6b6;
+  --ion-color-step-250: #bbbbbb;
+  --ion-color-step-300: #bfbfbf;
+  --ion-color-step-350: #c4c4c4;
+  --ion-color-step-400: #c8c8c8;
+  --ion-color-step-450: #cdcdcd;
+  --ion-color-step-500: #d2d2d2;
+  --ion-color-step-550: #d6d6d6;
+  --ion-color-step-600: #dbdbdb;
+  --ion-color-step-650: #dfdfdf;
+  --ion-color-step-700: #e4e4e4;
+  --ion-color-step-750: #e8e8e8;
+  --ion-color-step-800: #ededed;
+  --ion-color-step-850: #f1f1f1;
+  --ion-color-step-900: #f6f6f6;
+  --ion-color-step-950: #fafafa;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -217,6 +243,13 @@ http://ionicframework.com/docs/theming/ */
   display: block;
 }
 
+.input-with-background{
+  --background:var(--ion-color-step-750);
+    background:var(--ion-color-step-750);
+    margin-bottom: 5px;
+    
+}
+
 
 ion-button ion-spinner{
   height: 100%;
@@ -225,7 +258,14 @@ ion-toolbar{
   color: white;
 }
 
+.picker-wrapper.sc-ion-picker-md,.picker-wrapper.sc-ion-picker-ios{
+  background: white;
+  color: black;
+}
 
+.checkbox-icon{
+  border: 1px solid var(--ion-color-primary);
+}
 
 .alert-wrapper.sc-ion-alert-md,.alert-wrapper.sc-ion-alert-ios{
   background:var(--ion-color-secondary);
@@ -265,6 +305,9 @@ ion-tab-button ion-label{
 .tab-items{
   width: 100%;
   flex-wrap: wrap;
+  
+  padding-top: 15px;
+
   display: flex;
   letter-spacing: 1px;
 }
@@ -272,19 +315,29 @@ ion-tab-button ion-label{
   width: 100%;
   text-decoration: none;
   color: var(--ion-text-color);
+  display: flex;
+  flex-wrap: wrap;
 }
 .tab-item-title{
   margin: 0;
+  width:100%;
   font-weight: bold;
 }
 .tab-item-detail{
   width: fit-content;
   display: flex;
 }
-.tab-item-detail{
-  float: left;
-  margin-right: 10px;
+.tab-items p:nth-child(2){
+  width: 50%;
+  display: flex;
+  justify-content: flex-start;
 }
+.tab-items p:nth-child(3){
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+}
+
 
 .tab-item-detail ion-badge{
   display: inherit;

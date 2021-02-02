@@ -2,7 +2,7 @@
   <ion-page>
     <ion-content class="ion-padding">
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-            <ion-fab-button>
+            <ion-fab-button v-on:click="openCreateNewHomework">
                 <ion-icon :icon="add"></ion-icon>
             </ion-fab-button>
         </ion-fab>
@@ -10,13 +10,14 @@
           <p>No tests yet</p>
       </div>
     </ion-content>
+    <createNewHomeworkModal v-bind:openModal="openCreateNewHomeworkModal" v-on:createNewHomework="createNewHomework($event)" />
   </ion-page>
 </template>
 
 <script>
+import createNewHomeworkModal from "../Homeworks/createNewModal.vue"
 
 import {add} from "ionicons/icons"
-
 
 
 import {
@@ -36,16 +37,31 @@ export default {
         IonFabButton,
         IonContent,
         IonPage,
+        createNewHomeworkModal
     },
     data() {
         return {
             add,
-            tests:[]
+            tests:[],
+            openCreateNewHomeworkModal:false
         }
     },
     created() {
        
     },
+    beforeCreate() {
+      
+    },
+    methods:{
+      openCreateNewHomework(){
+          this.openCreateNewHomeworkModal=true
+      },
+      createNewHomework(event){
+        if(!event.data){
+          this.openCreateNewHomeworkModal=false
+        }
+      }
+    }
 
 };
 </script>
