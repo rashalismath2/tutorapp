@@ -26,6 +26,15 @@
                     <ion-label position="floating">Number of questions</ion-label>
                     <ion-input type="numeric" required=true v-model="number_of_questions" ></ion-input>
                 </ion-item>
+
+                <ion-item class="input-with-background">
+                    <ion-label>Allow late submissions</ion-label>
+                    <ion-checkbox
+                        slot="end"
+                        @update:modelValue="allowLate= $event"
+                        :modelValue="allowLate">
+                    </ion-checkbox>
+                </ion-item>
                 
                 <h2 class="ion-padding break-segments">Date and Time</h2>
                 
@@ -71,7 +80,7 @@
                         <p>{{upload.altName}}</p>
                     </div>
                     <div class="master-upload-box">
-                        <input required=true v-on:change="handleFileUpload" ref="file" multiple  type="file" accept=".pptx,.doc,.docx,.xls,.pdf,.jpeg,.jpg,.png" />
+                        <input v-on:click="handleFileUpload"   type="button" />
                         <ion-icon :icon="add"></ion-icon>
                     </div>
                 </div>
@@ -127,6 +136,8 @@
 
 import axios from "axios"
 
+
+import { FileChooser } from '@ionic-native/file-chooser';
 import {closeCircle,add} from "ionicons/icons"
 
 import {
@@ -186,11 +197,12 @@ export default ({
             groupsFromStore:[],
             groupCount:0,
             fileCount:0,
+            allowLate:true
         }
     },
     computed:{
         getUploads:function(){
-            if(this.uploads.length.length!=0){
+            if(this.uploads.length!=0){
                 return  this.uploads.map(file=>{
                     var len=file.name.split(".").length-1
                     file.extention=file.name.split(".")[len]
@@ -267,9 +279,50 @@ export default ({
             })
             this.groupCount=this.groupCount+1
         },
-        handleFileUpload(){
-            this.uploads=[...this.$refs.file.files,...this.uploads]
-            this.fileCount=this.fileCount+1
+        async handleFileUpload(){
+
+            FileChooser.open()
+            .then(uri => console.log(uri))
+            .catch(e => console.log(e));
+
+            // let multiple_selection = true
+            // const ext = ["jpg","png","pdf","jpeg","doc","docx","ppt","xls"] // list of extensions
+            // // let ext = ["MP3", "ImaGes"] // combination of extensions or category
+            // //let ext = ["videos", "audios", "images"] // list of all category
+            // // let ext = ["*"] // Allow any file type
+
+            // var formData = new FormData();
+            // let selectedFile = await FileSelector.fileSelector({
+            //         multiple_selection: multiple_selection,
+            //         ext: ext
+            //     })
+
+
+            // if(Capacitor.getPlatform()==="android"){
+            //     let paths = JSON.parse(selectedFile.paths)
+            //     let original_names = JSON.parse(selectedFile.original_names)
+            //     let extensions = JSON.parse(selectedFile.extensions)
+            //     for (let index = 0; index < paths.length; index++) {
+            //         const file = await fetch(paths[index]).then((r) => r.blob());
+            //         var fileNew={
+            //             platform:"android",
+            //             file:file,
+            //             name:original_names[index] + extensions[index]
+            //         }
+            //         this.uploads=[fileNew,...this.uploads]
+            //         this.fileCount=this.fileCount+1
+            //     }
+
+            // }
+            // else {
+            //     FileSelector.addListener("onFilesSelected", (data) => {
+            //         console.log(data)
+            //         this.uploads=[...data,...this.uploads]
+            //         this.fileCount=this.fileCount+data.length
+            //          console.log(this.uploads," dsdsdd|")
+            //     });    
+            // }
+
         },
         closeCreateNewGroupModal(close){
            if(close){

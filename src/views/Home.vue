@@ -10,7 +10,7 @@
         <ion-tabs  @ionTabsWillChange="beforeTabChange" @ionTabsDidChange="afterTabChange">
         <ion-tab-bar slot="top">
           <ion-tab-button :selected=testsTabSelected tab="tests"  href="/home/TabTests">
-            <ion-label>Tests</ion-label>
+            <ion-label>Homeworks</ion-label>
           </ion-tab-button>
 
           <ion-tab-button :selected=groupsTabSelected tab="groups" href="/home/TabGroups">
