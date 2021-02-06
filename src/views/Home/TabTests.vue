@@ -15,11 +15,17 @@
                 <p v-if="homework.status=='queued'" class="tab-item-detail"><span>Start Time</span> 
                   <ion-badge color="success">{{getTimeFormated(homework.startTime)}}</ion-badge>
                 </p>            
-                <p v-else-if="homework.status=='on' " class="tab-item-detail"><span>Ends at</span> 
+                <p v-else-if="homework.onetime && homework.status=='on' " class="tab-item-detail"><span>Ends at</span> 
                   <ion-badge color="danger">{{getTimeFormated(homework.endTime)}}</ion-badge>
                 </p>            
-                <p v-else-if="homework.status=='ended' " class="tab-item-detail"><span>Ended at</span> 
+                <p v-else-if="homework.onetime && homework.status=='ended' " class="tab-item-detail"><span>Ended at</span> 
                   <ion-badge color="warning">{{getTimeFormated(homework.ended_at)}}</ion-badge>
+                </p>            
+                <p v-else-if="!homework.onetime && homework.status=='on' " class="tab-item-detail"><span>Ending on</span> 
+                  <ion-badge color="warning">{{new Date(homework.endDate).toLocaleDateString()}}</ion-badge>
+                </p>            
+                <p v-else-if="!homework.onetime && homework.status=='ended' " class="tab-item-detail"><span>Stopped on</span> 
+                  <ion-badge color="warning">{{new Date(homework.ended_at).toLocaleDateString()}}</ion-badge>
                 </p>            
                 <div>
  
@@ -138,12 +144,38 @@ export default {
         return new Date(time).getHours()+" : "+new Date(time).getMinutes()
       },
       openCreateNewHomework(){
+        if(this.openCreateNewHomeworkModal){
+          this.openCreateNewHomeworkModal=false
+          return
+        }
+        if(!this.openCreateNewHomeworkModal){
           this.openCreateNewHomeworkModal=true
+        }
+
       },
       createNewHomework(event){
-        if(!event.data){
+        if(event.data==null){
           this.openCreateNewHomeworkModal=false
         }
+        else{
+          var homework={
+            title:event.data.get("title"),
+            startDate:event.data.get("startDate"),
+            endDate:event.data.get("endDate"),
+            startTime:event.data.get("startTime"),
+            endTime:event.data.get("endTime"),
+            number_of_questions:event.data.get("number_of_questions"),
+            onetime:event.data.get("onetime"),
+            note:event.data.get("note"),
+            allow_late:event.data.get("allow_late"),
+            status:"queued",
+            id:event.newData.id
+          }
+          this.homeworks=[homework,...this.homeworks]
+          this.openCreateNewHomeworkModal=false
+          this.$store.commit("Homeworks/addHomework",homework)
+        }
+       
       },
       retrieveHomeworks(){
         this.showLoading=true
@@ -348,9 +380,13 @@ ion-spinner{
       margin-top: 8px;
   display: flex;
 }
-#tests-actions p,#tests-actions >div{
-  width: 50%;
+#tests-actions >div{
+  width: 30%;
 }
+#tests-actions p{
+  width: 70%;
+}
+
 #tests-actions >div{
     display: flex;
     justify-content: flex-end;

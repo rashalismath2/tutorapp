@@ -5,12 +5,12 @@
     <ion-page>
         <ion-header :translucent="true">
             <ion-toolbar >
-                <ion-button  slot="end" v-on:click="closeCreateNewGroupModal(false)" fill="clear">Cancel</ion-button>
+                <ion-button  slot="end" v-on:click="closeCreateNewGroupModal" fill="clear">Cancel</ion-button>
             </ion-toolbar>
         </ion-header>
     
         <ion-content class="ion-padding">
-            <form>
+            <form v-on:submit="submitData">
                 <h2 class="ion-padding break-segments">Basics</h2>
                 <ion-item class="input-with-background">
                     <ion-label position="floating">Title</ion-label>
@@ -31,7 +31,7 @@
                     <ion-label>Allow late submissions</ion-label>
                     <ion-checkbox
                         slot="end"
-                        @update:modelValue="allowLate= $event"
+                        @update:modelValue="allowLate= !allowLate"
                         :modelValue="allowLate">
                     </ion-checkbox>
                 </ion-item>
@@ -42,8 +42,8 @@
                     <ion-label>Oneday</ion-label>
                     <ion-checkbox
                         slot="end"
-                        @update:modelValue="oneday= $event"
-                        :modelValue="oneday">
+                        @update:modelValue="onetime= !onetime"
+                        :modelValue="onetime">
                     </ion-checkbox>
                 </ion-item>
 
@@ -56,7 +56,7 @@
 
                 <ion-item class="input-with-background">
                     <ion-label>End date</ion-label>
-                    <ion-datetime :min="minYear" :max="minYear+2" :disabled="oneday" v-model="endDate" display-format="DD MMM YYYY" placeholder="Select Date"></ion-datetime>
+                    <ion-datetime :min="minYear" :max="minYear+2"  v-model="endDate" display-format="DD MMM YYYY" placeholder="Select Date"></ion-datetime>
                 </ion-item>
 
                 <ion-item class="input-with-background">
@@ -74,7 +74,7 @@
                 <div id="master-upload-outer-container">
                     <div v-bind:key="index" v-for="(upload,index) in getUploads" class=" master-uploads-container">
                         <div class="input-with-background master-uploads-extention">
-                            {{upload.extention}}
+                            {{upload.extension}}
                         </div>
                         <ion-icon v-on:click="removeFile(upload)" :icon="closeCircle"></ion-icon>
                         <p>{{upload.altName}}</p>
@@ -112,8 +112,10 @@
                     </div>
                 </div>
 
-
-                <ion-button class="submit" type="submit" size="default" slot="end" v-on:click="closeCreateNewGroupModal(true)" color="primary" expand="full">CREATE</ion-button>
+                <ion-button  type="submit" size="default" :disabled="loadingDialog" expand="full" color="primary" >
+                    <ion-spinner v-if="loadingDialog" color="primary" name="crescent"></ion-spinner>
+                    <span v-else>CREATE</span>
+                </ion-button>
 
             </form>
         </ion-content>
@@ -136,11 +138,14 @@
 
 import axios from "axios"
 
+import { Capacitor } from "@capacitor/core";
+
 
 import { FileChooser } from '@ionic-native/file-chooser';
 import {closeCircle,add} from "ionicons/icons"
 
 import {
+    IonSpinner,
     IonChip,
     IonBadge,
     IonIcon,
@@ -155,12 +160,13 @@ import {
     IonHeader,
     IonToolbar,
     IonContent,
-    IonModal, IonButton } from '@ionic/vue';
+    IonModal, IonButton ,useBackButton } from '@ionic/vue';
 
 
 export default ({
     props:["openModal"],
     components: {
+        IonSpinner,
         IonChip,
         IonBadge,
         IonIcon,
@@ -176,7 +182,8 @@ export default ({
         IonToolbar,
         IonContent,
         IonModal, IonButton },
-    
+
+  
     data() {
         return {
             minYear:new Date().getFullYear(),
@@ -186,7 +193,7 @@ export default ({
             note:"",
             number_of_questions:"",
             error_message:null,
-            oneday:true,
+            onetime:1,
             startDate:"",
             endDate:"",
             startTime:"",
@@ -197,15 +204,14 @@ export default ({
             groupsFromStore:[],
             groupCount:0,
             fileCount:0,
-            allowLate:true
+            allowLate:1,
+            loadingDialog:false
         }
     },
     computed:{
         getUploads:function(){
             if(this.uploads.length!=0){
                 return  this.uploads.map(file=>{
-                    var len=file.name.split(".").length-1
-                    file.extention=file.name.split(".")[len]
                     if(file.name.length>14){
                         file.altName=file.name.substr(0,15)
                     }
@@ -233,7 +239,14 @@ export default ({
     watch:{
        
     },
-    beforeCreate() {
+    setup(){
+                useBackButton(10, () => {
+               this.$emit("createNewHomework",{
+                data:null
+            })
+        });
+    },
+    created() {
         this.$store.dispatch("AuthUser/initiateAuthState")
         .then(()=>{
             this.error_message=null
@@ -253,12 +266,14 @@ export default ({
                 })
             }
         })
+
     },
     mounted() {
         
 
     },
     methods: {
+    
         addGroupBackToState(group){
             this.groupsFromStore=[group,...this.groupsFromStore]
             this.groups=this.groups.filter(grp=>{
@@ -280,74 +295,120 @@ export default ({
             this.groupCount=this.groupCount+1
         },
         async handleFileUpload(){
-
+            this.error_message=null
+            var allowd=["jpg","png","jpeg", "pdf", "doc","docx","xls","pptx"]
+            
             FileChooser.open()
-            .then(uri => console.log(uri))
-            .catch(e => console.log(e));
+            .then(async (uri) =>{
+                 this.error_message=null
+                let path = Capacitor.convertFileSrc(uri);
+                var file = await fetch(path).then((r) => r.blob());
 
-            // let multiple_selection = true
-            // const ext = ["jpg","png","pdf","jpeg","doc","docx","ppt","xls"] // list of extensions
-            // // let ext = ["MP3", "ImaGes"] // combination of extensions or category
-            // //let ext = ["videos", "audios", "images"] // list of all category
-            // // let ext = ["*"] // Allow any file type
-
-            // var formData = new FormData();
-            // let selectedFile = await FileSelector.fileSelector({
-            //         multiple_selection: multiple_selection,
-            //         ext: ext
-            //     })
+                var nameLength=path.split("/").length
+                var fileName=path.split("/")[nameLength-1]
+                var extension=file.type.split("/")[file.type.split("/").length-1]
 
 
-            // if(Capacitor.getPlatform()==="android"){
-            //     let paths = JSON.parse(selectedFile.paths)
-            //     let original_names = JSON.parse(selectedFile.original_names)
-            //     let extensions = JSON.parse(selectedFile.extensions)
-            //     for (let index = 0; index < paths.length; index++) {
-            //         const file = await fetch(paths[index]).then((r) => r.blob());
-            //         var fileNew={
-            //             platform:"android",
-            //             file:file,
-            //             name:original_names[index] + extensions[index]
-            //         }
-            //         this.uploads=[fileNew,...this.uploads]
-            //         this.fileCount=this.fileCount+1
-            //     }
-
-            // }
-            // else {
-            //     FileSelector.addListener("onFilesSelected", (data) => {
-            //         console.log(data)
-            //         this.uploads=[...data,...this.uploads]
-            //         this.fileCount=this.fileCount+data.length
-            //          console.log(this.uploads," dsdsdd|")
-            //     });    
-            // }
+                if(allowd.includes(extension)){
+                    file={
+                        file:file,
+                        name:fileName,
+                        extension:extension
+                    }
+                    this.uploads=[file,...this.uploads]
+                    this.fileCount=this.fileCount+1    
+                }
+                else{
+                    this.error_message="Can't upload "+extension+" types of files."
+                }
+                               
+            })
+            .catch(() =>{
+                this.error_message="Could'nt pickup the file"
+            });
 
         },
-        closeCreateNewGroupModal(close){
-           if(close){
-               console.error(this.uploads)
-               console.error(this.startDate)
-               console.error(this.endDate)
-               console.error(this.endTime)
-            //     if(this.groupDescription.replace(/\s+/g, '')!="" && this.groupName.replace(/\s+/g, '')!=""){
-            //     this.$emit("createNewHomework",{
-            //         data:close?true:false,
-            //         name:this.groupName,
-            //         description:this.groupDescription,
-            //     })
-            // }
-            // else{
-            //     this.error_message="Please dont not leave fileds empty"
-            // }
-           }
-           else{
-                 this.$emit("createNewHomework",{
-                    data:close?true:false,
-                    name:this.groupName,
-                    description:this.groupDescription,
+        closeCreateNewGroupModal(){  
+            this.$emit("createNewHomework",{
+                data:null
+            })
+        },
+        submitData(e){
+            e.preventDefault();
+            
+            this.error_message=null
+            this.loadingDialog=false
+            
+            if(this.groups.length==0 || this.uploads.length==0){
+                this.error_message="There should be atleast one attachement and group"
+            }
+            else if(this.startDate==null || this.startTime==null || this.endTime==null){
+                this.error_message="Please fill time fields"
+            }
+            else{
+
+                var formData=new FormData();
+
+                formData.append("title",this.title);
+                formData.append("note",this.note);
+
+                if(this.onetime){
+                    formData.append("onetime",1);
+                }
+                else{
+                    formData.append("onetime",0);
+                }
+                
+                formData.append("startDate",this.startDate);
+                formData.append("endDate",this.endDate);
+                formData.append("startTime",this.startTime);
+                formData.append("endTime",this.endTime);
+                formData.append("groupCount",this.groupCount);
+                formData.append("fileCount",this.fileCount);
+                formData.append("number_of_questions",this.number_of_questions);
+
+                if(this.allowLate){
+                   formData.append("allow_late",1);
+                }
+                else{
+                     formData.append("allow_late",0);
+                }
+                
+
+                this.groups.forEach((grp,i) => {
+                     var j=i+1
+                    formData.append("group_"+j,grp.id)
+                });
+                this.uploads.forEach((file,i) => {
+                    var j=i+1
+                    formData.append("file_"+j,file.file,file.name+"."+file.extension)
+                });
+
+                this.loadingDialog=true
+                axios.post(process.env.VUE_APP_BACKEND_API+'/master/homeworks',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        "Authorization":"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
+                    }
+                }
+                )
+                .then((res)=>{
+                    this.error_message="Homework created"
+                    this.loadingDialog=false
+                    this.$emit("createNewHomework",{
+                        data:formData,
+                        newData:res.data.data
+                    })
+
                 })
-           }
+                .catch((e)=>{
+                    this.error_message=e
+                    this.loadingDialog=false
+                    // this.error_message="Something went wrong. Please check inputs and try again!"
+                })
+            }
         }
     },
 });
@@ -379,6 +440,9 @@ ion-toolbar ion-button{
     height: fit-content;
     margin: 0 5px 5px 0;
     position: relative;
+}
+ion-spinner{
+  color:white
 }
 .master-uploads-container p{
     color: var(--ion-color-primary);

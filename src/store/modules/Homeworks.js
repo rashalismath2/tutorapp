@@ -13,6 +13,9 @@ export default {
         setHomeworks:(state,payload)=>{
             state.homeworks=payload
         },
+        addHomework:(state,payload)=>{
+            state.homeworks=[payload,...state.homeworks]
+        },
         startHomework:(state,payload)=>{
             state.homeworks=state.homeworks.map(homework=>{
                 if(homework.id==payload.id){
