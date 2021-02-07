@@ -296,7 +296,7 @@ export default {
             .then(() => console.log('File is opened'))
             .catch(() => {
                 var request= {
-                    uri: "http://192.168.8.101:8000/"+upload.file_path ,
+                    uri:process.env.VUE_APP_BACKEND+"/"+upload.file_path ,
                     title: 'Master - '+fileName,
                     visibleInDownloadsUi: true,
                     notificationVisibility:0,
@@ -326,7 +326,7 @@ export default {
         catch (e) {
                 //if something went wrong while reading download?
             var request= {
-                uri: "http://192.168.8.101:8000/"+upload.file_path ,
+                uri: process.env.VUE_APP_BACKEND+"/"+upload.file_path ,
                 title: 'Master - '+fileName,
                 visibleInDownloadsUi: true,
                 notificationVisibility:0,

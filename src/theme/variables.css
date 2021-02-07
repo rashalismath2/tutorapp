@@ -243,6 +243,10 @@ http://ionicframework.com/docs/theming/ */
   display: block;
 }
 
+ion-skeleton-text{
+  background: var(--ion-color-step-850);
+}
+
 .input-with-background{
   --background:var(--ion-color-step-750);
     background:var(--ion-color-step-750);

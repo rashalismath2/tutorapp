@@ -425,9 +425,7 @@ ion-spinner{
   color:var(--ion-text-danger)
 }
 
-ion-skeleton-text{
-    background: var(--ion-color-secondary);
-}
+
 
 
 </style>
