@@ -357,3 +357,81 @@ ion-spinner{
   color: black;
   text-align: center;
 }
+
+/* homewroks */
+
+.master-uploads-container{
+  width: 25%;
+  height: fit-content;
+  margin: 0 5px 5px 0;
+  position: relative;
+}
+
+.master-uploads-container p{
+  color: var(--ion-color-primary);
+  text-align: center;
+  margin: 0;
+}
+
+.master-upload-box{
+  width: 80px;
+  height: 80px;
+  margin: 0 5px 5px 0;
+  position: relative;
+  background:var(--ion-color-step-750);
+  position: relative;
+}
+.master-upload-box input{
+    width: 80px;
+  height: 80px;
+  position: absolute;
+  background: none;
+  opacity: 0;
+  z-index: 2;
+}
+
+.master-upload-box ion-icon{
+    color: var(--ion-icon-color);
+  position: absolute;
+  right: 0;
+  font-size: 80px;
+  z-index: 1;
+}
+
+.master-uploads-container ion-icon{
+  color: black;
+  
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+}
+.master-uploads-container ion-spinner{
+  position: absolute;
+  /* right: 0; */
+  top: 12px;
+  
+}
+
+#master-upload-outer-container{
+      display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.master-uploads-extention{
+      width: 80px;
+ color: black;
+  height: 80px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+      font-size: 25px;
+}
+
+.break-segments{
+  color: var(--ion-color-primary);
+  margin-top: 0;
+  font-size: 20px;
+  font-weight: bold;
+}

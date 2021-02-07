@@ -1,5 +1,6 @@
 <template>
   <ion-modal
+    backdrop-dismiss=false
     :is-open="openCreateNewGroupModal">
 
     <ion-page>

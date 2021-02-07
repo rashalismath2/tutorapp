@@ -95,7 +95,7 @@ export default {
       this.getroupsData()
 
     },
-
+    
   methods: {
     getroupsData(){
      this.showLoading=true

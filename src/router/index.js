@@ -9,6 +9,8 @@ import Group from "../views/Groups/group.vue"
 
 import Contact from "../views/Groups/contacts.vue"
 
+import Homework from "../views/Homeworks/homework.vue"
+
 
 const routes = [
   {
@@ -69,7 +71,12 @@ const routes = [
         component: ()=>import("../views/Groups/contactTabs/allContacts.vue")
       }
     ]
-  }
+  },
+  {
+    path: '/homework/:id',
+    name: 'homework',
+    component: Homework,
+  },
 
 ]
 

@@ -1,5 +1,6 @@
 <template>
   <ion-modal
+    backdrop-dismiss=false
     :is-open="openModal">
 
     <ion-page>
@@ -72,7 +73,7 @@
                 <h2 class="ion-padding break-segments">Uploads</h2>
 
                 <div id="master-upload-outer-container">
-                    <div v-bind:key="index" v-for="(upload,index) in getUploads" class=" master-uploads-container">
+                    <div v-bind:key="index" v-for="(upload,index) in getUploads" class="master-uploads-container">
                         <div class="input-with-background master-uploads-extention">
                             {{upload.extension}}
                         </div>
@@ -111,7 +112,7 @@
                         </ion-item>
                     </div>
                 </div>
-
+    
                 <ion-button  type="submit" size="default" :disabled="loadingDialog" expand="full" color="primary" >
                     <ion-spinner v-if="loadingDialog" color="primary" name="crescent"></ion-spinner>
                     <span v-else>CREATE</span>
@@ -160,7 +161,7 @@ import {
     IonHeader,
     IonToolbar,
     IonContent,
-    IonModal, IonButton ,useBackButton } from '@ionic/vue';
+    IonModal, IonButton  } from '@ionic/vue';
 
 
 export default ({
@@ -205,7 +206,8 @@ export default ({
             groupCount:0,
             fileCount:0,
             allowLate:1,
-            loadingDialog:false
+            loadingDialog:false,
+
         }
     },
     computed:{
@@ -239,13 +241,7 @@ export default ({
     watch:{
        
     },
-    setup(){
-                useBackButton(10, () => {
-               this.$emit("createNewHomework",{
-                data:null
-            })
-        });
-    },
+
     created() {
         this.$store.dispatch("AuthUser/initiateAuthState")
         .then(()=>{
@@ -312,7 +308,7 @@ export default ({
                 if(allowd.includes(extension)){
                     file={
                         file:file,
-                        name:fileName,
+                        name:fileName.replace(/[^a-z0-9]/gi, '_').toLowerCase(),
                         extension:extension
                     }
                     this.uploads=[file,...this.uploads]
@@ -395,11 +391,10 @@ export default ({
                 }
                 )
                 .then((res)=>{
-                    this.error_message="Homework created"
                     this.loadingDialog=false
                     this.$emit("createNewHomework",{
                         data:formData,
-                        newData:res.data.data
+                        newData:res.data
                     })
 
                 })
@@ -428,77 +423,8 @@ export default ({
 ion-toolbar ion-button{
     color: white;
 }
-.break-segments{
-    color: var(--ion-color-primary);
-    margin-top: 0;
-    font-size: 20px;
-    font-weight: bold;
-}
 
-.master-uploads-container{
-    width: 25%;
-    height: fit-content;
-    margin: 0 5px 5px 0;
-    position: relative;
-}
-ion-spinner{
-  color:white
-}
-.master-uploads-container p{
-    color: var(--ion-color-primary);
-    text-align: center;
-    margin: 0;
-}
 
-.master-upload-box{
-    width: 80px;
-    height: 80px;
-    margin: 0 5px 5px 0;
-    position: relative;
-    background:var(--ion-color-step-750);
-    position: relative;
-}
-.master-upload-box input{
-      width: 80px;
-    height: 80px;
-    position: absolute;
-    background: none;
-    opacity: 0;
-    z-index: 2;
-}
-
-.master-upload-box ion-icon{
-      color: var(--ion-icon-color);
-    position: absolute;
-    right: 0;
-    font-size: 80px;
-    z-index: 1;
-}
-
-.master-uploads-container ion-icon{
-    color: black;
-    
-    position: absolute;
-    right: 0;
-    top: 0;
-    font-size: 20px;
-}
-
-#master-upload-outer-container{
-        display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-.master-uploads-extention{
-        width: 80px;
-   color: black;
-    height: 80px;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-        font-size: 25px;
-}
 
 #add-groups-container{
         display: flex;
@@ -534,6 +460,10 @@ ion-spinner{
 
 .submit{
     margin-top: 30px;
+}
+
+ion-spinner{
+  color: white;
 }
 
 </style>

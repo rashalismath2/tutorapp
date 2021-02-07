@@ -1,32 +1,32 @@
 <template>
   <ion-page>
-    <ion-content class="">
-        <ion-spinner class="loadSpinner" v-show="showLoading" name="crescent"></ion-spinner>
-        
+    <ion-content class="">       
         <ion-item  v-for="(homework,index) in homeworks" v-bind:key="index">
           <div class="tab-items">
-            <router-link exact :to="{name:'group',params:{id:homework.id}}">
+            <router-link exact :to="{name:'homework',params:{id:homework.id}}">
               <p class="tab-item-title">
                 <span>{{homework.title}}</span>
                 <span>{{new Date(homework.startDate).toLocaleDateString()}}</span>
               </p>
             </router-link>
               <div id="tests-actions">
-                <p v-if="homework.status=='queued'" class="tab-item-detail"><span>Start Time</span> 
-                  <ion-badge color="success">{{getTimeFormated(homework.startTime)}}</ion-badge>
-                </p>            
-                <p v-else-if="homework.onetime && homework.status=='on' " class="tab-item-detail"><span>Ends at</span> 
-                  <ion-badge color="danger">{{getTimeFormated(homework.endTime)}}</ion-badge>
-                </p>            
-                <p v-else-if="homework.onetime && homework.status=='ended' " class="tab-item-detail"><span>Ended at</span> 
-                  <ion-badge color="warning">{{getTimeFormated(homework.ended_at)}}</ion-badge>
-                </p>            
-                <p v-else-if="!homework.onetime && homework.status=='on' " class="tab-item-detail"><span>Ending on</span> 
-                  <ion-badge color="warning">{{new Date(homework.endDate).toLocaleDateString()}}</ion-badge>
-                </p>            
-                <p v-else-if="!homework.onetime && homework.status=='ended' " class="tab-item-detail"><span>Stopped on</span> 
-                  <ion-badge color="warning">{{new Date(homework.ended_at).toLocaleDateString()}}</ion-badge>
-                </p>            
+                 <router-link exact :to="{name:'homework',params:{id:homework.id}}">
+                    <p v-if="homework.status=='queued'" class="tab-item-detail"><span>Start Time</span> 
+                      <ion-badge color="success">{{getTimeFormated(homework.startTime)}}</ion-badge>
+                    </p>            
+                    <p v-else-if="homework.onetime && homework.status=='on' " class="tab-item-detail"><span>Ends at</span> 
+                      <ion-badge color="danger">{{getTimeFormated(homework.endTime)}}</ion-badge>
+                    </p>            
+                    <p v-else-if="homework.onetime && homework.status=='ended' " class="tab-item-detail"><span>Ended at</span> 
+                      <ion-badge color="warning">{{getTimeFormated(homework.ended_at)}}</ion-badge>
+                    </p>            
+                    <p v-else-if="!homework.onetime && homework.status=='on' " class="tab-item-detail"><span>Ending on</span> 
+                      <ion-badge color="warning">{{new Date(homework.endDate).toLocaleDateString()}}</ion-badge>
+                    </p>            
+                    <p v-else-if="!homework.onetime && homework.status=='ended' " class="tab-item-detail"><span>Stopped on</span> 
+                      <ion-badge color="warning">{{new Date(homework.ended_at).toLocaleDateString()}}</ion-badge>
+                    </p>   
+                  </router-link>         
                 <div>
  
                   <ion-button :fill="testStatusOnChange && testStatusChangedOf==homework.id?'outline':'solid'" :disabled="testStatusOnChange && testStatusChangedOf==homework.id"
@@ -50,9 +50,20 @@
               </div>
           </div>
         </ion-item>
-        
-        <div v-if="homeworks.length==0" class="no-items" >
-          <p>No tests yet</p>
+
+        <div  v-if="showLoading" >          
+          <div v-for="i in [1,2,3,4,5]" v-bind:key="i" class="ion-padding custom-skeleton">
+                <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                <ion-skeleton-text animated></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 88%"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 70%"></ion-skeleton-text>
+                <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+          </div>
+
+        </div>
+
+        <div v-if="!showLoading  && homeworks.length==0" class="no-items" >
+          <p>No tests has been created yet</p>
         </div>
         
         <ion-fab vertical="bottom" horizontal="end" slot="fixed">
@@ -86,6 +97,7 @@ import {add} from "ionicons/icons"
 
 
 import {
+  IonSkeletonText,
   IonItem,IonBadge,
     IonSpinner,
     IonToast,
@@ -102,6 +114,7 @@ import {
 export default {
 
   components: {
+    IonSkeletonText,
     IonButton,
       IonItem,IonBadge,
         IonSpinner,
@@ -158,6 +171,7 @@ export default {
           this.openCreateNewHomeworkModal=false
         }
         else{
+          this.error_message="Homework created"
           var homework={
             title:event.data.get("title"),
             startDate:event.data.get("startDate"),
@@ -169,10 +183,13 @@ export default {
             note:event.data.get("note"),
             allow_late:event.data.get("allow_late"),
             status:"queued",
-            id:event.newData.id
+            id:event.newData.homework.id,
+            homework_attachments:event.newData.attachments,
+            homework_groups:event.newData.homeworkgroups,
           }
-          this.homeworks=[homework,...this.homeworks]
           this.openCreateNewHomeworkModal=false
+          this.homeworks=[homework,...this.homeworks]
+
           this.$store.commit("Homeworks/addHomework",homework)
         }
        
@@ -381,10 +398,13 @@ ion-spinner{
   display: flex;
 }
 #tests-actions >div{
-  width: 30%;
+  width: 20%;
 }
 #tests-actions p{
-  width: 70%;
+  width: 80%;
+}
+#tests-actions p ion-badge{
+  height: fit-content;
 }
 
 #tests-actions >div{
@@ -404,5 +424,10 @@ ion-spinner{
 .spinner-danger{
   color:var(--ion-text-danger)
 }
+
+ion-skeleton-text{
+    background: var(--ion-color-secondary);
+}
+
 
 </style>
