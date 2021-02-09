@@ -152,6 +152,17 @@ export default {
     computed:{
  
     },
+    watch: {
+      $route(to, from) {
+        if(from.name=="homework" && to.query.deleted==1){
+            this.error_message="deleted"
+            this.homeworks=this.homeworks.filter(homework=>{
+              return homework.id!=from.params.id
+            })
+            this.$store.commit("Homeworks/RemoveHomewrokById",from.params.id)
+        }
+      }
+    },
     methods:{
       getTimeFormated(time){
         return new Date(time).getHours()+" : "+new Date(time).getMinutes()

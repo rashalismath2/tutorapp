@@ -93,6 +93,8 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-step-850: #f1f1f1;
   --ion-color-step-900: #f6f6f6;
   --ion-color-step-950: #fafafa;
+
+  
 }
 
 @media (prefers-color-scheme: dark) {
@@ -245,6 +247,14 @@ http://ionicframework.com/docs/theming/ */
 
 ion-skeleton-text{
   background: var(--ion-color-step-850);
+}
+
+.delete-spinner div.loading-spinner.sc-ion-loading-md{
+  width: 50px;
+  --width: 50px;
+}
+.delete-spinner{
+  --spinner-color: var(--ion-color-primary);
 }
 
 .input-with-background{

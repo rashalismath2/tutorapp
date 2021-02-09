@@ -16,6 +16,11 @@ export default {
         addHomework:(state,payload)=>{
             state.homeworks=[payload,...state.homeworks]
         },
+        RemoveHomewrokById:(state,payload)=>{
+            state.homeworks=state.homeworks.filter(homework=>{
+              return homework.id!=payload
+            })
+        },
         startHomework:(state,payload)=>{
             state.homeworks=state.homeworks.map(homework=>{
                 if(homework.id==payload.id){

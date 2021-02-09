@@ -164,7 +164,12 @@
             >
             </ion-toast>
 
-
+              <ion-loading
+                :is-open="openDelete"
+                cssClass="delete-spinner"
+                message="Please wait..."
+            >
+            </ion-loading>
     </ion-content>
   </ion-page>
 </template>
@@ -191,11 +196,13 @@ import {
 //   share, peopleCircle,at
   } from "ionicons/icons"
 
-// import axios from "axios"
+import axios from "axios"
 
 import {
-          IonButton,
-      IonChip,
+    IonLoading,
+    alertController ,
+    IonButton,
+    IonChip,
     actionSheetController ,
     IonBadge,
     IonSpinner,
@@ -213,6 +220,7 @@ import {
 
 export default {
   components: {
+      IonLoading,
       IonButton,
       IonChip,
       IonBadge,
@@ -254,6 +262,7 @@ export default {
         removedOriginalHomeworkFilesCount:0,
         removedOriginalHomeworkGroups:[],
         removedOriginalHomeworkGroupsCount:0,
+        openDelete:false
       }
     },
     computed:{
@@ -387,6 +396,48 @@ export default {
             });
 
         },
+        async presentAlertConfirmDelete() {
+            const alert = await alertController
+                .create({
+                cssClass: '',
+                header: 'Confirm!',
+                message: 'Are you really want to delete?',
+                buttons: [
+                    {
+                        text: 'Cancel',
+                        role: 'cancel',
+                        cssClass: 'secondary',
+                        handler: blah => {
+                            console.log('Confirm Cancel:', blah)
+                        },
+                    },
+                    {
+                        text: 'Delete',
+                        handler: () => {
+                            this.error_message=null
+                            this.openDelete=true
+                            axios.delete(
+                                process.env.VUE_APP_BACKEND_API+"/master/homeworks/"+this.$route.params.id,
+                                {
+                                    headers:{
+                                        Authorization:"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
+                                    }
+                                }
+                            )
+                            .then(()=>{
+                                this.openDelete=false
+                                this.$router.replace("/home/TabTests?deleted=1")
+                            })
+                            .catch(()=>{
+                                this.error_message="Something went wrong! try again."
+                                this.openDelete=false
+                            })
+                        },
+                    },
+                ],
+                });
+            return alert.present();
+            },
         async openFile(upload){
             if(this.isEdditting){
                 return 
@@ -511,7 +562,7 @@ export default {
                         role: 'destructive',
                         icon: trash,
                         handler: () => {
-                            console.log('Delete clicked')
+                            this.presentAlertConfirmDelete();
                         },
                     },
                     {
@@ -552,4 +603,6 @@ ion-skeleton-text{
 #master-test-groups{
     margin-bottom:15px !important;
 }
+
+
 </style>
