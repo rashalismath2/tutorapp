@@ -665,7 +665,7 @@ export default {
                                 this.presentAlertConfirmDelete();
                             }
                             else{
-                                this.error_message("Cant delete when the homework has already begin");
+                                this.error_message="Cant delete when the homework has already begin";
                             }
                         },
                     },
