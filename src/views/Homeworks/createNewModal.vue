@@ -261,6 +261,9 @@ export default ({
                     this.error_message="Something went wrong"
                 })
             }
+            else{
+                this.groupsFromStore=groups
+            }
         })
 
     },
