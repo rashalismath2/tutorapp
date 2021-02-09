@@ -134,6 +134,8 @@
                         </div>
                     </div>
 
+                    <p style="color:black">{{error_message}}</p>
+
                     <ion-button v-show="isEdditting"  type="submit" size="default" :disabled="loadingDialog" expand="full" color="primary" >
                         <ion-spinner v-if="loadingDialog" color="primary" name="crescent"></ion-spinner>
                         <span v-else>Update</span>
@@ -359,7 +361,100 @@ export default {
             })
             this.fileCount=this.fileCount-1
         },
-        submitData(){},
+        submitData(e){
+            e.preventDefault()
+            this.loadingDialog=true
+            this.error_message=null
+            var formData=new FormData();
+
+            formData.append("title",this.homework.title);
+            formData.append("note",this.homework.note);
+
+            if(this.homework.onetime){
+                formData.append("onetime",1);
+            }
+            else{
+                formData.append("onetime",0);
+            }
+                
+                formData.append("startDate",this.homework.startDate);
+                formData.append("endDate",this.homework.endDate);
+                formData.append("startTime",this.homework.startTime);
+                formData.append("endTime",this.homework.endTime);
+                formData.append("number_of_questions",this.homework.number_of_questions);
+
+                formData.append("groupCount",this.groupCount);
+                formData.append("fileCount",this.fileCount);
+
+                formData.append("removedOriginalHomeworkFilesCount",this.removedOriginalHomeworkFilesCount);
+
+                this.removedOriginalHomeworkFiles.forEach((file,i) => {
+                     var j=i+1
+                    formData.append("removed_homework_file_"+j,file)
+                });
+   
+                formData.append("removedOriginalHomeworkGroupsCount",this.removedOriginalHomeworkGroupsCount);
+
+                this.removedOriginalHomeworkGroups.forEach((grp,i) => {
+                     var k=i+1
+                    formData.append("removed_homework_group_"+k,grp)
+                });
+
+              
+
+                if(this.homework.allowLate){
+                   formData.append("allow_late",1);
+                }
+                else{
+                     formData.append("allow_late",0);
+                }
+                
+
+                this.groups.forEach((grp,i) => {
+                     var j=i+1
+                    formData.append("group_"+j,grp.id)
+                });
+                this.uploads.forEach((file,i) => {
+                    var j=i+1
+                    formData.append("file_"+j,file.file,file.name+"."+file.extension)
+                });
+
+                axios.post(process.env.VUE_APP_BACKEND_API+'/master/homeworks/'+this.$route.params.id,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        "Authorization":"Bearer "+this.$store.getters["AuthUser/getAccessToken"]
+                    }
+                }
+                )
+                .then((res)=>{
+                    this.groups=[]
+                    this.uploads=[]
+                    this.groupCount=0
+                    this.fileCount=0
+                    this.removedOriginalHomeworkFiles=[]
+                    this.removedOriginalHomeworkFilesCount=0,
+                    this.removedOriginalHomeworkGroups=[]
+                    this.removedOriginalHomeworkGroupsCount=0
+
+                    var homework={
+                        ...this.homework,
+                        homework_attachments:res.data.attachments,
+                        homework_groups:res.data.homeworkgroups,
+                    }
+                    this.homework=homework
+                    this.$store.commit("Homeworks/addHomework",homework)
+                    this.error_message="updated"
+                    this.isEdditting=false
+                     this.loadingDialog=false
+                })
+                .catch((e)=>{
+                    this.error_message=e.message
+                    this.loadingDialog=false
+                })
+
+        },
         jumpToHome(){
             this.$router.replace({name:"TabTests"});
         },
@@ -554,7 +649,12 @@ export default {
                         role: 'destructive',
                         icon: pencil,
                         handler: () => {
-                            this.isEdditting=true
+                            if(this.homework.status=="ended"){
+                                this.error_message="Cant edit that are already marked as ended. Please try duplicating"
+                            }
+                            else{
+                                this.isEdditting=true
+                            }
                         },
                     },
                     {
@@ -603,6 +703,12 @@ ion-skeleton-text{
 #master-test-groups{
     margin-bottom:15px !important;
 }
-
-
+ion-spinner{
+  color: white;
+}
+#master-test-groups ion-input{
+    display: inherit;
+    width: -webkit-fill-available;
+    color: black;
+}
 </style>
