@@ -134,8 +134,6 @@
                         </div>
                     </div>
 
-                    <p style="color:black">{{error_message}}</p>
-
                     <ion-button v-show="isEdditting"  type="submit" size="default" :disabled="loadingDialog" expand="full" color="primary" >
                         <ion-spinner v-if="loadingDialog" color="primary" name="crescent"></ion-spinner>
                         <span v-else>Update</span>
@@ -649,8 +647,8 @@ export default {
                         role: 'destructive',
                         icon: pencil,
                         handler: () => {
-                            if(this.homework.status=="ended"){
-                                this.error_message="Cant edit that are already marked as ended. Please try duplicating"
+                            if(this.homework.status=="ended" || this.homework.status=="on"){
+                                this.error_message="Cant edit that are already marked as ended nor on. Please try duplicating"
                             }
                             else{
                                 this.isEdditting=true
