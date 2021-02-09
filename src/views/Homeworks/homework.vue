@@ -638,6 +638,7 @@ export default {
             }
         },
          async presentActionSheet() {
+             this.error_message=null
             const actionSheet = await actionSheetController
                 .create({
                 cssClass: '',
@@ -660,7 +661,12 @@ export default {
                         role: 'destructive',
                         icon: trash,
                         handler: () => {
-                            this.presentAlertConfirmDelete();
+                            if(this.homework.status!="on"){
+                                this.presentAlertConfirmDelete();
+                            }
+                            else{
+                                this.error_message("Cant delete when the homework has already begin");
+                            }
                         },
                     },
                     {
